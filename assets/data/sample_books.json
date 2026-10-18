@@ -1,0 +1,332 @@
+[
+  {
+    "id": "sample-01",
+    "title": "Atomic Habits",
+    "authors": [
+      "James Clear"
+    ],
+    "categories": [
+      "Phát triển bản thân"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Atomic Habits.png"
+  },
+  {
+    "id": "sample-02",
+    "title": "The Little Prince",
+    "authors": [
+      "Antoine de Saint-Exupéry"
+    ],
+    "categories": [
+      "Thiếu nhi"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Little Prince.png"
+  },
+  {
+    "id": "sample-03",
+    "title": "Harry Potter and the Philosopher’s Stone",
+    "authors": [
+      "J. K. Rowling"
+    ],
+    "categories": [
+      "Kỳ ảo"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Harry Potter and the Philosopher’s Stone.png"
+  },
+  {
+    "id": "sample-04",
+    "title": "1984",
+    "authors": [
+      "George Orwell"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/1984.png"
+  },
+  {
+    "id": "sample-05",
+    "title": "Pride and Prejudice",
+    "authors": [
+      "Jane Austen"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Pride and Prejudice.png"
+  },
+  {
+    "id": "sample-06",
+    "title": "The Great Gatsby",
+    "authors": [
+      "F. Scott Fitzgerald"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Great Gatsby.png"
+  },
+  {
+    "id": "sample-07",
+    "title": "To Kill a Mockingbird",
+    "authors": [
+      "Harper Lee"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/To Kill a Mockingbird.png"
+  },
+  {
+    "id": "sample-08",
+    "title": "Jane Eyre",
+    "authors": [
+      "Charlotte Brontë"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Jane Eyre.png"
+  },
+  {
+    "id": "sample-09",
+    "title": "Little Women",
+    "authors": [
+      "Louisa May Alcott"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Little Women.png"
+  },
+  {
+    "id": "sample-10",
+    "title": "Animal Farm",
+    "authors": [
+      "George Orwell"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Animal Farm.png"
+  },
+  {
+    "id": "sample-11",
+    "title": "The Alchemist",
+    "authors": [
+      "Paulo Coelho"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Alchemist.png"
+  },
+  {
+    "id": "sample-12",
+    "title": "The Hobbit",
+    "authors": [
+      "J. R. R. Tolkien"
+    ],
+    "categories": [
+      "Kỳ ảo"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Hobbit.png"
+  },
+  {
+    "id": "sample-13",
+    "title": "The Fellowship of the Ring",
+    "authors": [
+      "J. R. R. Tolkien"
+    ],
+    "categories": [
+      "Kỳ ảo"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Fellowship of the Ring.png"
+  },
+  {
+    "id": "sample-14",
+    "title": "The Lion, the Witch and the Wardrobe",
+    "authors": [
+      "C. S. Lewis"
+    ],
+    "categories": [
+      "Kỳ ảo"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Lion, the Witch and the Wardrobe.png"
+  },
+  {
+    "id": "sample-15",
+    "title": "Dune",
+    "authors": [
+      "Frank Herbert"
+    ],
+    "categories": [
+      "Khoa học viễn tưởng"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Dune.png"
+  },
+  {
+    "id": "sample-16",
+    "title": "Brave New World",
+    "authors": [
+      "Aldous Huxley"
+    ],
+    "categories": [
+      "Khoa học viễn tưởng"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Brave New World.png"
+  },
+  {
+    "id": "sample-17",
+    "title": "Fahrenheit 451",
+    "authors": [
+      "Ray Bradbury"
+    ],
+    "categories": [
+      "Khoa học viễn tưởng"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Fahrenheit 451.png"
+  },
+  {
+    "id": "sample-18",
+    "title": "Frankenstein",
+    "authors": [
+      "Mary Shelley"
+    ],
+    "categories": [
+      "Kinh dị"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Frankenstein.png"
+  },
+  {
+    "id": "sample-19",
+    "title": "Dracula",
+    "authors": [
+      "Bram Stoker"
+    ],
+    "categories": [
+      "Kinh dị"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Dracula.png"
+  },
+  {
+    "id": "sample-20",
+    "title": "And Then There Were None",
+    "authors": [
+      "Agatha Christie"
+    ],
+    "categories": [
+      "Trinh thám"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/And Then There Were None.png"
+  },
+  {
+    "id": "sample-21",
+    "title": "Murder on the Orient Express",
+    "authors": [
+      "Agatha Christie"
+    ],
+    "categories": [
+      "Trinh thám"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Murder on the Orient Express.png"
+  },
+  {
+    "id": "sample-22",
+    "title": "The Adventures of Sherlock Holmes",
+    "authors": [
+      "Arthur Conan Doyle"
+    ],
+    "categories": [
+      "Trinh thám"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Adventures of Sherlock Holmes.png"
+  },
+  {
+    "id": "sample-23",
+    "title": "The Hound of the Baskervilles",
+    "authors": [
+      "Arthur Conan Doyle"
+    ],
+    "categories": [
+      "Trinh thám"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Hound of the Baskervilles.png"
+  },
+  {
+    "id": "sample-24",
+    "title": "Alice’s Adventures in Wonderland",
+    "authors": [
+      "Lewis Carroll"
+    ],
+    "categories": [
+      "Thiếu nhi"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Alice’s Adventures in Wonderland.png"
+  },
+  {
+    "id": "sample-25",
+    "title": "Charlotte’s Web",
+    "authors": [
+      "E. B. White"
+    ],
+    "categories": [
+      "Thiếu nhi"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Charlotte’s Web.png"
+  },
+  {
+    "id": "sample-26",
+    "title": "Matilda",
+    "authors": [
+      "Roald Dahl"
+    ],
+    "categories": [
+      "Thiếu nhi"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Matilda.png"
+  },
+  {
+    "id": "sample-27",
+    "title": "How to Win Friends and Influence People",
+    "authors": [
+      "Dale Carnegie"
+    ],
+    "categories": [
+      "Phát triển bản thân"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/How to Win Friends and Influence People.png"
+  },
+  {
+    "id": "sample-28",
+    "title": "The 7 Habits of Highly Effective People",
+    "authors": [
+      "Stephen R. Covey"
+    ],
+    "categories": [
+      "Phát triển bản thân"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The 7 Habits of Highly Effective People.png"
+  },
+  {
+    "id": "sample-29",
+    "title": "Deep Work",
+    "authors": [
+      "Cal Newport"
+    ],
+    "categories": [
+      "Phát triển bản thân"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Cal Newport.png"
+  },
+  {
+    "id": "sample-30",
+    "title": "The Psychology of Money",
+    "authors": [
+      "Morgan Housel"
+    ],
+    "categories": [
+      "Tài chính"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Psychology of Money.png"
+  }
+]

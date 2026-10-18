@@ -1,0 +1,215 @@
+{
+  "checkedAt": "2026-10-13",
+  "records": [
+    {
+      "work": "/works/OL17930368W",
+      "sourceTitle": "Atomic Habits",
+      "edition": "/books/OL36647151M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/12539702-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL10263W",
+      "sourceTitle": "Le petit prince",
+      "edition": "/books/OL56384519M",
+      "coverUrl": "https://covers.openlibrary.org/b/olid/OL56384519M-M.jpg?default=false",
+      "coverStatus": "HTTP Error 404: Not Found"
+    },
+    {
+      "work": "/works/OL82563W",
+      "sourceTitle": "Harry Potter and the Philosopher's Stone",
+      "edition": "/books/OL61027601M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/15155833-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL1168083W",
+      "sourceTitle": "Nineteen Eighty-Four",
+      "edition": "/books/OL62597712M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/15258673-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL66554W",
+      "sourceTitle": "Pride and Prejudice",
+      "edition": "/books/OL47044678M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/14348537-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL468431W",
+      "sourceTitle": "The Great Gatsby",
+      "edition": "/books/OL22570129M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/10590366-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL3140822W",
+      "sourceTitle": "To Kill a Mockingbird",
+      "edition": "/books/OL26467746M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/14351077-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL1095427W",
+      "sourceTitle": "Jane Eyre",
+      "edition": "/books/OL6969829M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/8235363-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL29983W",
+      "sourceTitle": "Little Women",
+      "edition": "/books/OL27300715M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/8775559-M.jpg?default=false",
+      "coverStatus": "HTTP Error 502: Bad Gateway"
+    },
+    {
+      "work": "/works/OL1168007W",
+      "sourceTitle": "Animal Farm",
+      "edition": "/books/OL23269355M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/15246098-M.jpg?default=false",
+      "coverStatus": "HTTP Error 502: Bad Gateway"
+    },
+    {
+      "work": "/works/OL796465W",
+      "sourceTitle": "O Alquimista",
+      "edition": "/books/OL9242938M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/45762-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL27482W",
+      "sourceTitle": "The Hobbit",
+      "edition": "/books/OL51711263M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/14627509-M.jpg?default=false",
+      "coverStatus": "HTTP Error 502: Bad Gateway"
+    },
+    {
+      "work": "/works/OL27513W",
+      "sourceTitle": "The Fellowship of the Ring",
+      "edition": "/books/OL51708686M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/14627060-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL71037W",
+      "sourceTitle": "The Lion, the Witch and the Wardrobe",
+      "edition": "/books/OL7265111M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/8441376-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL893414W",
+      "sourceTitle": "Dune",
+      "edition": "/books/OL32848840M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/11481354-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL64365W",
+      "sourceTitle": "Brave New World",
+      "edition": "/books/OL32915616M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/14847160-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL103123W",
+      "sourceTitle": "Fahrenheit 451",
+      "edition": "/books/OL40236195M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/12993656-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL450063W",
+      "sourceTitle": "Frankenstein; or, The Modern Prometheus",
+      "edition": "/books/OL35649409M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/12356249-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL85892W",
+      "sourceTitle": "Dracula",
+      "edition": "/books/OL35373336M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/12216503-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL471565W",
+      "sourceTitle": "And Then There Were None",
+      "edition": "/books/OL32520899M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/11172296-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL471576W",
+      "sourceTitle": "Murder on the Orient Express",
+      "edition": "/books/OL32440766M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/11100465-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL262421W",
+      "sourceTitle": "The Adventures of Sherlock Holmes [12 stories]",
+      "edition": "/books/OL24349267M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/6717853-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL262454W",
+      "sourceTitle": "The Hound of the Baskervilles",
+      "edition": "/books/OL45884134M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/13418096-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL138052W",
+      "sourceTitle": "Alice's Adventures in Wonderland",
+      "edition": "/books/OL31754751M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/10527843-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL483391W",
+      "sourceTitle": "Charlotte's Web",
+      "edition": "/books/OL23248482M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/8461797-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL45846W",
+      "sourceTitle": "Matilda",
+      "edition": "/books/OL32765318M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/12889769-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL1063267W",
+      "sourceTitle": "How to Win Friends and Influence People",
+      "edition": "/books/OL62656710M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/15262530-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL2629977W",
+      "sourceTitle": "The 7 Habits of Highly Effective People",
+      "edition": "/books/OL28136651M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/10079937-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL17713267W",
+      "sourceTitle": "Deep Work",
+      "edition": "/books/OL26314691M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/14859612-M.jpg?default=false",
+      "coverStatus": 200
+    },
+    {
+      "work": "/works/OL21640039W",
+      "sourceTitle": "The Psychology of Money",
+      "edition": "/books/OL29412746M",
+      "coverUrl": "https://covers.openlibrary.org/b/id/14653525-M.jpg?default=false",
+      "coverStatus": 200
+    }
+  ]
+}
