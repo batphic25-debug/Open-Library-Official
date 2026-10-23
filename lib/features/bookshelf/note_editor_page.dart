@@ -1,6 +1,8 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import 'bookshelf_service.dart';
+import 'backend_bookshelf_service.dart';
 import 'models/saved_book.dart';
 
 class NoteEditorPage extends StatefulWidget {
@@ -42,7 +44,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
         _saving = false;
       });
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Đã lưu ghi chú.')));
+          .showSnackBar(SnackBar(content: Text(context.tr("Đã lưu ghi chú."))));
       return true;
     } catch (_) {
       if (mounted) {
@@ -61,20 +63,20 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     final choice = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Giữ thay đổi ghi chú?'),
-        content: const Text('Bạn có thay đổi chưa lưu.'),
+        title: Text(context.tr("Giữ thay đổi ghi chú?")),
+        content: Text(context.tr("Bạn có thay đổi chưa lưu.")),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Viết tiếp'),
+            child: Text(context.tr("Viết tiếp")),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, 'discard'),
-            child: const Text('Bỏ thay đổi'),
+            child: Text(context.tr("Bỏ thay đổi")),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, 'save'),
-            child: const Text('Lưu và rời trang'),
+            child: Text(context.tr("Lưu và rời trang")),
           ),
         ],
       ),
@@ -93,16 +95,18 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Xóa ghi chú?'),
-        content: const Text('Nội dung đã lưu và thay đổi đang viết sẽ bị xóa.'),
+        title: Text(context.tr("Xóa ghi chú?")),
+        content: Text(
+          context.tr("Nội dung đã lưu và thay đổi đang viết sẽ bị xóa."),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Hủy'),
+            child: Text(context.tr("Hủy")),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Xóa'),
+            child: Text(context.tr("Xóa")),
           ),
         ],
       ),
@@ -121,7 +125,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
         _saving = false;
       });
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Đã xóa ghi chú.')));
+          .showSnackBar(SnackBar(content: Text(context.tr("Đã xóa ghi chú."))));
     } catch (_) {
       if (mounted) {
         setState(() {
@@ -139,7 +143,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
       if (!didPop) _leave();
     },
     child: Scaffold(
-      appBar: AppBar(title: const Text('Ghi chú của tôi')),
+      appBar: AppBar(title: Text(context.tr("Ghi chú của tôi"))),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(24),
@@ -149,10 +153,14 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 8),
-            Text(widget.saved.book.authorLabel),
+            Text(context.tr(widget.saved.book.authorLabel)),
             const SizedBox(height: 8),
-            const Text(
-              'Một ghi chú riêng cho mỗi sách • Lưu trên thiết bị',
+            Text(
+              context.tr(
+                widget.service is BackendBookshelfService
+                    ? 'Một ghi chú riêng cho mỗi sách • Lưu vào tài khoản'
+                    : 'Một ghi chú riêng cho mỗi sách • Lưu trên thiết bị',
+              ),
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 24),
@@ -162,10 +170,12 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
               minLines: 10,
               maxLines: null,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Nội dung ghi chú',
+              decoration: InputDecoration(
+                labelText: context.tr("Nội dung ghi chú"),
                 alignLabelWithHint: true,
-                hintText: 'Một câu văn yêu thích, một điều bạn muốn nhớ…',
+                hintText: context.tr(
+                  "Một câu văn yêu thích, một điều bạn muốn nhớ…",
+                ),
               ),
               onChanged: (_) => setState(() => _error = null),
             ),
@@ -173,18 +183,23 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
             if (_error != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: Text(_error!, style: const TextStyle(color: Colors.red)),
+                child: Text(
+                  context.trError(_error!),
+                  style: const TextStyle(color: Colors.red),
+                ),
               ),
             FilledButton.icon(
               onPressed: _saving ? null : _save,
               icon: const Icon(Icons.save_outlined),
-              label: Text(_saving ? 'Đang lưu…' : 'Lưu ghi chú'),
+              label: Text(
+                _saving ? context.tr("Đang lưu…") : context.tr("Lưu ghi chú"),
+              ),
             ),
             if (_original.isNotEmpty)
               TextButton.icon(
                 onPressed: _saving ? null : _delete,
                 icon: const Icon(Icons.delete_outline),
-                label: const Text('Xóa ghi chú'),
+                label: Text(context.tr("Xóa ghi chú")),
               ),
           ],
         ),

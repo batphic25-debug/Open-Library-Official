@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:sembast/sembast.dart';
 
 import '../books/models/book.dart';
+import '../books/services/offline_book_library.dart';
 import '../discovers/widgets/reading_card.dart';
 import 'bookshelf_database.dart';
 import 'models/book_note.dart';
@@ -55,6 +58,7 @@ class BookshelfService extends ChangeNotifier {
               book: saved.book,
               pagesRead: saved.pagesRead,
               totalPages: saved.totalPages,
+              totalPagesEstimated: saved.totalPagesEstimated,
             ),
           ),
     );
@@ -74,13 +78,16 @@ class BookshelfService extends ChangeNotifier {
         );
       }
       for (final value in snapshot['books'] as List) {
-        final saved = SavedBook.fromJson(
-          Map<String, dynamic>.from(value as Map),
+        final saved = await _withReadingTotal(
+          SavedBook.fromJson(Map<String, dynamic>.from(value as Map)),
         );
         if (saved.userId != userId || books.containsKey(saved.id)) {
           throw const FormatException('Dữ liệu sách không hợp lệ.');
         }
-        books[saved.id] = saved;
+        books[saved.id] =
+            saved.status == ReadingStatus.reading && saved.progress == 1
+            ? saved.copyWith(status: ReadingStatus.read)
+            : saved;
       }
       for (final value in snapshot['notes'] as List) {
         final note = BookNote.fromJson(Map<String, dynamic>.from(value as Map));
@@ -95,6 +102,30 @@ class BookshelfService extends ChangeNotifier {
     _books = books;
     _notes = notes;
     _loaded = true;
+  }
+
+  Future<SavedBook> _withReadingTotal(SavedBook saved) async {
+    if (saved.totalPages != null) return saved;
+    final bundled = OfflineBookLibrary.forBook(saved.book);
+    if (bundled == null) return saved;
+    try {
+      final content = await OfflineBookLibrary.load(bundled);
+      final total = content.pageCount(saved.book);
+      // Keep manually entered legacy progress if it exceeds the text estimate.
+      if (saved.pagesRead > total) return saved;
+      return SavedBook(
+        userId: saved.userId,
+        book: saved.book,
+        status: saved.status,
+        pagesRead: saved.pagesRead,
+        estimatedTotalPages: total,
+        addedAt: saved.addedAt,
+        updatedAt: saved.updatedAt,
+      );
+    } catch (_) {
+      // A missing bundled text must not prevent access to saved books or notes.
+      return saved;
+    }
   }
 
   /// Errors are exposed for the page's retry state. Mutations still throw on failure.
@@ -113,12 +144,12 @@ class BookshelfService extends ChangeNotifier {
   });
 
   Future<T> _change<T>(
-    T Function(Map<String, SavedBook>, Map<String, BookNote>) edit,
+    FutureOr<T> Function(Map<String, SavedBook>, Map<String, BookNote>) edit,
   ) => _enqueue(() async {
     await _load();
     final books = Map<String, SavedBook>.from(_books);
     final notes = Map<String, BookNote>.from(_notes);
-    final result = edit(books, notes);
+    final result = await edit(books, notes);
     await _record.put(_database!, {
       'version': 1,
       'userId': userId,
@@ -135,16 +166,18 @@ class BookshelfService extends ChangeNotifier {
   SavedBook _require(Map<String, SavedBook> books, String id) =>
       books[id] ?? (throw StateError('Sách không còn trong tủ.'));
 
-  Future<bool> addBook(Book book) => _change((books, notes) {
+  Future<bool> addBook(Book book) => _change((books, notes) async {
     if (books.containsKey(book.id)) return false;
     final now = DateTime.now().toUtc();
-    books[book.id] = SavedBook(
-      userId: userId,
-      book: book,
-      status: ReadingStatus.wantToRead,
-      pagesRead: 0,
-      addedAt: now,
-      updatedAt: now,
+    books[book.id] = await _withReadingTotal(
+      SavedBook(
+        userId: userId,
+        book: book,
+        status: ReadingStatus.wantToRead,
+        pagesRead: 0,
+        addedAt: now,
+        updatedAt: now,
+      ),
     );
     return true;
   });
@@ -177,16 +210,22 @@ class BookshelfService extends ChangeNotifier {
     }
     books[id] = saved.copyWith(
       pagesRead: pagesRead,
-      status: completed ? ReadingStatus.read : ReadingStatus.reading,
+      status:
+          completed ||
+              (saved.totalPages != null && pagesRead == saved.totalPages)
+          ? ReadingStatus.read
+          : ReadingStatus.reading,
     );
   });
   Future<void> updateEdition(String id, BookEdition edition) =>
-      _change((books, notes) {
+      _change((books, notes) async {
         final saved = _require(books, id);
-        books[id] = saved.copyWith(
-          book: saved.book.withEdition(edition),
-          pagesRead: 0,
-          status: ReadingStatus.wantToRead,
+        books[id] = await _withReadingTotal(
+          saved.copyWith(
+            book: saved.book.withEdition(edition),
+            pagesRead: 0,
+            status: ReadingStatus.wantToRead,
+          ),
         );
       });
   Future<void> saveNote(String id, String body) => _change((books, notes) {

@@ -80,6 +80,68 @@ class Book {
     );
   }
 
+  static int? _coverId(dynamic url) {
+    final match = RegExp(r'/b/id/(\d+)').firstMatch(url is String ? url : '');
+    return match == null ? null : int.tryParse(match.group(1)!);
+  }
+
+  factory Book.fromApiJson(
+    Map<String, dynamic> json, {
+    Map<String, String> categoryNames = const {},
+  }) {
+    final edition = json['selectedEdition'];
+    return Book(
+      id: libraryKey(json['workId'], 'works', 'W'),
+      title:
+          sourceText(json['title']) ??
+          (throw const FormatException('Missing title')),
+      authors: sourceStrings(json['authors']),
+      categories: sourceStrings(json['categories'])
+          .map(
+            (slug) =>
+                categoryNames[slug] ??
+                const {
+                  'science-fiction': 'Khoa học viễn tưởng',
+                  'horror': 'Kinh dị',
+                  'fantasy': 'Kỳ ảo',
+                  'self-development': 'Phát triển bản thân',
+                  'children': 'Thiếu nhi',
+                  'mystery': 'Trinh thám',
+                  'finance': 'Tài chính',
+                  'literature': 'Văn học',
+                }[slug] ??
+                slug,
+          )
+          .toList(),
+      description:
+          sourceText(json['summaryVi']) ?? sourceText(json['description']),
+      descriptionSource:
+          sourceText(json['descriptionSource']) ??
+          (sourceText(json['description']) == null ? null : 'Open Library'),
+      firstPublishYear: json['firstPublishYear'] is int
+          ? json['firstPublishYear'] as int
+          : null,
+      coverId: _coverId(json['coverUrl']),
+      coverAsset: sourceText(json['localCoverKey']),
+      coverIsIllustration: sourceText(json['localCoverKey']) != null,
+      selectedEdition: edition is Map
+          ? BookEdition.fromApiJson(Map<String, dynamic>.from(edition))
+          : null,
+    );
+  }
+
+  factory Book.fromApiSearchJson(Map<String, dynamic> json) => Book(
+    id: libraryKey(json['workId'], 'works', 'W'),
+    title:
+        sourceText(json['title']) ??
+        (throw const FormatException('Missing title')),
+    authors: sourceStrings(json['authors']),
+    firstPublishYear: json['firstPublishYear'] is int
+        ? json['firstPublishYear'] as int
+        : null,
+    coverId: _coverId(json['coverUrl']),
+  );
+
   factory Book.fromSearchJson(Map<String, dynamic> json) {
     final title = sourceText(json['title']);
     if (title == null) throw const FormatException('Missing book title');
@@ -162,7 +224,9 @@ class BookEdition {
       : 'https://covers.openlibrary.org/b/olid/${id.split('/').last}-M.jpg?default=false';
   Uri get sourceUrl =>
       Uri.https('openlibrary.org', libraryKey(id, 'books', 'M'));
-  String get languageLabel => languages
+  String get languageLabel => languageLabelFor((label) => label);
+
+  String languageLabelFor(String Function(String) translate) => languages
       .map(
         (code) =>
             const {
@@ -178,6 +242,7 @@ class BookEdition {
             }[code] ??
             code,
       )
+      .map(translate)
       .join(', ');
 
   factory BookEdition.fromJson(Map<String, dynamic> json) {
@@ -214,6 +279,21 @@ class BookEdition {
       coverId: coverIds.isEmpty ? null : coverIds.first,
     );
   }
+
+  factory BookEdition.fromApiJson(Map<String, dynamic> json) => BookEdition(
+    id: libraryKey(json['editionId'], 'books', 'M'),
+    workIds: [libraryKey(json['workId'], 'works', 'W')],
+    title: sourceText(json['title']),
+    isbn: {
+      ...sourceStrings(json['isbn13']),
+      ...sourceStrings(json['isbn10']),
+    }.toList(),
+    publishers: sourceStrings(json['publishers']),
+    publishDate: sourceText(json['publishDate']),
+    pages: json['pageCount'] is int ? json['pageCount'] as int : null,
+    languages: sourceStrings(json['languages']),
+    coverId: Book._coverId(json['coverUrl']),
+  );
 }
 
 class BookAuthor {

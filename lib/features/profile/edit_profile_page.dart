@@ -1,3 +1,5 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
+
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -45,15 +47,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
       final bytes = await (widget.pickImage?.call() ?? _pickFromGallery());
       if (bytes == null || !mounted) return;
       if (bytes.lengthInBytes > 2 * 1024 * 1024) {
-        throw ArgumentError('Ảnh vượt quá 2 MB. Hãy chọn ảnh nhỏ hơn.');
+        throw ArgumentError("Ảnh vượt quá 2 MB. Hãy chọn ảnh nhỏ hơn.");
       }
       final codec = await ui.instantiateImageCodec(bytes);
       codec.dispose();
       await widget.settings.updateAvatar(bytes);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Đã cập nhật ảnh đại diện trên thiết bị.'),
+        SnackBar(
+          content: Text(context.tr("Đã cập nhật ảnh đại diện trên thiết bị.")),
         ),
       );
     } catch (error) {
@@ -79,7 +81,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
     if (file == null) return null;
     if (await file.length() > 2 * 1024 * 1024) {
-      throw ArgumentError('Ảnh vượt quá 2 MB. Hãy chọn ảnh nhỏ hơn.');
+      throw ArgumentError("Ảnh vượt quá 2 MB. Hãy chọn ảnh nhỏ hơn.");
     }
     return file.readAsBytes();
   }
@@ -89,7 +91,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       await widget.settings.updateAvatar(null);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đã khôi phục ảnh đại diện mặc định.')),
+        SnackBar(
+          content: Text(context.tr("Đã khôi phục ảnh đại diện mặc định.")),
+        ),
       );
     } catch (_) {
       if (mounted) setState(() => _error = 'Không thể xóa ảnh. Hãy thử lại.');
@@ -116,7 +120,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đã lưu hồ sơ trong phiên mô phỏng.')),
+        SnackBar(content: Text(context.tr('Đã lưu thông tin cá nhân.'))),
       );
       Navigator.of(context).pop();
     } on AuthException catch (error) {
@@ -130,7 +134,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Thông tin cá nhân')),
+    appBar: AppBar(title: Text(context.tr("Thông tin cá nhân"))),
     body: SafeArea(
       child: Center(
         child: ConstrainedBox(
@@ -154,34 +158,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   onPressed: _picking ? null : _chooseAvatar,
                   icon: const Icon(Icons.photo_library_outlined),
                   label: Text(
-                    _picking ? 'Đang chọn ảnh...' : 'Thay ảnh đại diện',
+                    _picking
+                        ? context.tr("Đang chọn ảnh...")
+                        : context.tr("Thay ảnh đại diện"),
                   ),
                 ),
                 if (widget.settings.avatarBytes != null)
                   TextButton(
                     onPressed: _picking ? null : _removeAvatar,
-                    child: const Text('Dùng ảnh mặc định'),
+                    child: Text(context.tr("Dùng ảnh mặc định")),
                   ),
                 const SizedBox(height: 28),
                 TextFormField(
                   controller: _name,
-                  decoration: const InputDecoration(labelText: 'Tên hiển thị'),
+                  decoration: InputDecoration(
+                    labelText: context.tr("Tên hiển thị"),
+                  ),
                   validator: (value) => (value ?? '').trim().isEmpty
-                      ? 'Vui lòng nhập tên hiển thị'
+                      ? context.tr("Vui lòng nhập tên hiển thị")
                       : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _email,
                   decoration: const InputDecoration(labelText: 'Email'),
+                  readOnly: !widget.authService.canChangeEmail,
                   keyboardType: TextInputType.emailAddress,
-                  validator: AuthService.validateEmail,
+                  validator: (value) =>
+                      context.trValidation(AuthService.validateEmail(value)),
                 ),
                 if (_error != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: Text(
-                      _error!,
+                      context.trError(_error!),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.error,
                       ),
@@ -190,14 +200,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 const SizedBox(height: 22),
                 FilledButton(
                   onPressed: _saving ? null : _save,
-                  child: Text(_saving ? 'Đang lưu...' : 'Lưu thay đổi'),
+                  child: Text(
+                    _saving
+                        ? context.tr("Đang lưu...")
+                        : context.tr("Lưu thay đổi"),
+                  ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Tài khoản mô phỏng: thay đổi tên và email sẽ mất khi khởi động lại ứng dụng.',
+                Text(
+                  widget.authService.canChangeEmail
+                      ? context.tr(
+                          'Thay đổi tên và email sẽ mất khi khởi động lại ứng dụng.',
+                        )
+                      : context.tr(
+                          'Email hiện chỉ xem; tên hiển thị được lưu trên tài khoản.',
+                        ),
                 ),
-                const Text(
-                  'Ảnh đại diện được lưu ngay trên thiết bị khi chọn.',
+                Text(
+                  context.tr(
+                    "Ảnh đại diện được lưu ngay trên thiết bị khi chọn.",
+                  ),
                 ),
               ],
             ),

@@ -1,3 +1,5 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -181,7 +183,9 @@ class _SearchPageState extends State<SearchPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              added ? 'Đã thêm sách vào tủ.' : 'Sách đã có trong tủ.',
+              added
+                  ? context.tr("Đã thêm sách vào tủ.")
+                  : context.tr("Sách đã có trong tủ."),
             ),
           ),
         );
@@ -189,8 +193,8 @@ class _SearchPageState extends State<SearchPage> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Chưa lưu được sách. Vui lòng thử lại.'),
+          SnackBar(
+            content: Text(context.tr("Chưa lưu được sách. Vui lòng thử lại.")),
           ),
         );
       }
@@ -244,7 +248,7 @@ class _SearchPageState extends State<SearchPage> {
                     Semantics(
                       header: true,
                       child: Text(
-                        'Tìm kiếm',
+                        context.tr("Tìm kiếm"),
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w800,
@@ -270,7 +274,7 @@ class _SearchPageState extends State<SearchPage> {
                             Theme.of(context).brightness == Brightness.dark
                             ? const Color(0xFF343544)
                             : AppTheme.softSurface,
-                        hintText: 'Tên sách hoặc tác giả',
+                        hintText: context.tr("Tên sách hoặc tác giả"),
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 15,
                           horizontal: 16,
@@ -298,7 +302,7 @@ class _SearchPageState extends State<SearchPage> {
                         suffixIcon: _query.text.isEmpty
                             ? null
                             : IconButton(
-                                tooltip: 'Xóa từ khóa',
+                                tooltip: context.tr("Xóa từ khóa"),
                                 onPressed: () {
                                   _query.clear();
                                   _restart();
@@ -309,7 +313,7 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                     const SizedBox(height: 12),
                     FilterChip(
-                      label: const Text('Sách đọc offline'),
+                      label: Text(context.tr("Sách đọc offline")),
                       avatar: const Icon(Icons.menu_book_outlined, size: 20),
                       selected: _offlineOnly,
                       selectedColor: const Color(0xFFFFE8E1),
@@ -344,10 +348,11 @@ class _SearchPageState extends State<SearchPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (_query.text.trim().isEmpty && !_offlineOnly)
-                  const _SearchMessage(
+                  _SearchMessage(
                     icon: Icons.manage_search,
-                    text:
-                        'Nhập tên sách hoặc tác giả để khám phá Open Library.',
+                    text: context.tr(
+                      "Nhập tên sách hoặc tác giả để khám phá Open Library.",
+                    ),
                   )
                 else ...[
                   if (_books.isNotEmpty) ...[
@@ -358,8 +363,8 @@ class _SearchPageState extends State<SearchPage> {
                       children: [
                         Text(
                           _offlineOnly
-                              ? 'Sách đọc offline'
-                              : 'Kết quả tìm kiếm',
+                              ? context.tr("Sách đọc offline")
+                              : context.tr("Kết quả tìm kiếm"),
                           style: const TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.w800,
@@ -367,10 +372,12 @@ class _SearchPageState extends State<SearchPage> {
                           ),
                         ),
                         Text(
-                          '$_total sách',
-                          style: const TextStyle(
+                          context.tr("{0} sách", [_total]),
+                          style: TextStyle(
                             fontSize: 16,
-                            color: AppTheme.muted,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -390,16 +397,17 @@ class _SearchPageState extends State<SearchPage> {
                       onRetry: _offlineOnly ? _loadOffline : _load,
                     )
                   else if (_books.isEmpty)
-                    const _SearchMessage(
+                    _SearchMessage(
                       icon: Icons.search_off,
-                      text:
-                          'Không tìm thấy sách. Thử từ khóa hoặc bộ lọc khác.',
+                      text: context.tr(
+                        "Không tìm thấy sách. Thử từ khóa hoặc bộ lọc khác.",
+                      ),
                     )
                   else if (_hasMore)
                     OutlinedButton.icon(
                       onPressed: _load,
                       icon: const Icon(Icons.expand_more),
-                      label: const Text('Tải thêm'),
+                      label: Text(context.tr("Tải thêm")),
                     ),
                 ],
               ],

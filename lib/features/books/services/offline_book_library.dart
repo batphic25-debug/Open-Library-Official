@@ -14,6 +14,13 @@ class OfflineBookText {
 
   final List<String> paragraphs;
   final String license;
+
+  int pageCount(Book book) {
+    final pages = book.selectedEdition?.pages;
+    if (pages != null && pages > 0) return pages;
+    final length = paragraphs.fold<int>(0, (sum, text) => sum + text.length);
+    return (length / 1800).ceil().clamp(1, 10000);
+  }
 }
 
 class OfflineBookLibrary {

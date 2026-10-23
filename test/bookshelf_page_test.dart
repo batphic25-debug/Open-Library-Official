@@ -158,7 +158,10 @@ void main() {
       }
       await tester.enterText(find.byType(TextFormField), '100');
       await tester.pump();
-      await tap(tester, 'Đánh dấu Đã đọc');
+      expect(
+        tester.widget<CheckboxListTile>(find.byType(CheckboxListTile)).value,
+        isTrue,
+      );
       await tap(tester, 'Lưu tiến độ');
       expect(shelf.books.single.status, ReadingStatus.read);
       await seed(tester, unknown);
@@ -352,6 +355,53 @@ void main() {
     await tester.pumpAndSettle();
     expect(destination, findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  shelfTest('all selected navigation tabs share the discover dark colors', (
+    tester,
+  ) async {
+    await tester.runAsync(SampleBooks.load);
+    final auth = AuthService();
+    addTearDown(auth.dispose);
+    await tester.runAsync(
+      () => auth.signIn(
+        email: AuthService.demoEmail,
+        password: AuthService.demoPassword,
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.dark,
+        home: MainShell(
+          authService: auth,
+          service: library,
+          bookshelfService: shelf,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    for (final label in ['Khám phá', 'Tìm kiếm', 'Tủ sách', 'Cá nhân']) {
+      final destination = find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text(label),
+      );
+      await tester.tap(destination);
+      await tester.pumpAndSettle();
+      final theme = NavigationBarTheme.of(
+        tester.element(find.byType(NavigationBar)),
+      );
+      expect(theme.backgroundColor, const Color(0xFF18263B));
+      expect(theme.indicatorColor, const Color(0xFF244571));
+      expect(
+        theme.iconTheme!.resolve({WidgetState.selected})!.color,
+        const Color(0xFFFFC45A),
+      );
+      expect(
+        theme.labelTextStyle!.resolve({WidgetState.selected})!.color,
+        const Color(0xFFFFC45A),
+      );
+      expect(tester.takeException(), isNull);
+    }
   });
 
   shelfTest(

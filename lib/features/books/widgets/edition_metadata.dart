@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import '../models/book.dart';
@@ -9,11 +10,11 @@ class EditionMetadata extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final values = {
-      'Phiên bản': edition?.title,
-      'Ngôn ngữ ấn bản': edition?.languageLabel,
-      'Số trang': edition?.pages?.toString(),
-      'Nhà xuất bản': edition?.publishers.join(', '),
-      'Ngày xuất bản': edition?.publishDate,
+      context.tr("Phiên bản"): edition?.title,
+      context.tr("Ngôn ngữ ấn bản"): edition?.languageLabelFor(context.tr),
+      context.tr("Số trang"): edition?.pages?.toString(),
+      context.tr("Nhà xuất bản"): edition?.publishers.join(', '),
+      context.tr("Ngày xuất bản"): edition?.publishDate,
       'ISBN': edition?.isbn.join(' · '),
     };
     return Column(
@@ -31,7 +32,7 @@ class EditionMetadata extends StatelessWidget {
                   ),
                   TextSpan(
                     text: entry.value == null || entry.value!.isEmpty
-                        ? 'Chưa có dữ liệu'
+                        ? context.tr("Chưa có dữ liệu")
                         : entry.value,
                   ),
                 ],

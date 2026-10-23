@@ -28,10 +28,12 @@ class SettingsService extends ChangeNotifier {
   Database? _database;
   Future<void> _pending = Future.value();
   bool _loaded = false;
+  bool get isLoaded => _loaded;
   bool _disposed = false;
   Future<void>? _closing;
   bool notifications = false;
   String language = 'vi';
+  // First login defaults to light; later logins restore the user's choice.
   bool darkMode = false;
   Uint8List? _avatarBytes;
   String? _avatarBase64;

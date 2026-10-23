@@ -8,6 +8,8 @@ import 'package:open_library_client/features/books/book_detail_page.dart';
 import 'package:open_library_client/features/books/book_reading_page.dart';
 import 'package:open_library_client/features/books/models/book.dart';
 import 'package:open_library_client/features/books/models/reading_option.dart';
+import 'package:open_library_client/features/books/services/book_discussion_service.dart';
+import 'package:open_library_client/features/books/services/book_ranking_service.dart';
 import 'package:open_library_client/features/books/services/offline_book_library.dart';
 import 'package:open_library_client/features/books/services/open_library_service.dart';
 import 'package:open_library_client/features/books/services/sample_books.dart';
@@ -163,6 +165,16 @@ void main() {
           .map((book) => book.title),
       containsAll(['And Then There Were None', 'Matilda']),
     );
+  });
+
+  testWidgets('The Little Prince opens with readable text', (tester) async {
+    final bundled = OfflineBookLibrary.forBook(
+      const Book(id: '/works/OL10263W', title: 'The Little Prince'),
+    )!;
+    final text = await tester.runAsync(() => OfflineBookLibrary.load(bundled));
+    expect(text!.paragraphs.first, 'TO LEON WERTH');
+    expect(text.paragraphs[1], startsWith('I ask the indulgence'));
+    expect(text.paragraphs.take(5).join(' '), isNot(contains('%')));
   });
 
   testWidgets('nine complete books are bundled with their license', (
@@ -333,6 +345,47 @@ void main() {
     expect(saved.fontSize, 24);
   });
 
+  testWidgets('reader reports final page only at the end of the text', (
+    tester,
+  ) async {
+    const book = Book(
+      id: '/works/OL66554W',
+      title: 'Pride and Prejudice',
+      selectedEdition: BookEdition(
+        id: '/books/OL1M',
+        workIds: ['/works/OL66554W'],
+        pages: 100,
+      ),
+    );
+    int? page;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: BookReadingPage(
+          book: book,
+          onPageChanged: (_, value) async => page = value,
+        ),
+      ),
+    );
+    await tester.runAsync(
+      () => OfflineBookLibrary.load(OfflineBookLibrary.forBook(book)!),
+    );
+    await tester.pumpAndSettle();
+    final scroll = tester.widget<ListView>(find.byType(ListView)).controller!;
+    for (var i = 0; i < 5; i++) {
+      scroll.jumpTo(scroll.position.maxScrollExtent - 1);
+      await tester.pumpAndSettle();
+    }
+    await tester.pump(const Duration(milliseconds: 650));
+    expect(page, lessThan(100));
+    for (var i = 0; i < 5; i++) {
+      scroll.jumpTo(scroll.position.maxScrollExtent);
+      await tester.pumpAndSettle();
+    }
+    await tester.pump(const Duration(milliseconds: 650));
+    expect(page, 100);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('offline reading appears in shelf and resumes at saved place', (
     tester,
   ) async {
@@ -348,6 +401,14 @@ void main() {
     final shelf = ReaderShelf();
     final settings = ReaderSettings(null);
     final service = NoNetworkService();
+    final discussion = BookDiscussionService(
+      openDatabase: () =>
+          newDatabaseFactoryMemory().openDatabase('reader-discussion'),
+    );
+    final rankings = BookRankingService(
+      openDatabase: () =>
+          newDatabaseFactoryMemory().openDatabase('reader-rankings'),
+    );
     addTearDown(auth.dispose);
     addTearDown(shelf.dispose);
     addTearDown(settings.dispose);
@@ -366,6 +427,8 @@ void main() {
           bookshelfService: shelf,
           settings: settings,
           service: service,
+          discussionService: discussion,
+          rankingService: rankings,
         ),
       ),
     );
@@ -379,6 +442,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Pride and Prejudice').first);
     await tester.pumpAndSettle();
+    expect(rankings.viewsFor(pride.id, days: 1), 1);
     await tester.ensureVisible(find.text('Đọc sách'));
     await tester.tap(find.text('Đọc sách'));
     await tester.pump();

@@ -7,7 +7,9 @@ import 'package:open_library_client/core/widgets/book_cover.dart';
 import 'package:open_library_client/features/books/book_detail_page.dart';
 import 'package:open_library_client/features/books/editions_page.dart';
 import 'package:open_library_client/features/books/models/book.dart';
+import 'package:open_library_client/features/books/services/book_discussion_service.dart';
 import 'package:open_library_client/features/books/services/open_library_service.dart';
+import 'package:sembast/sembast_memory.dart' show newDatabaseFactoryMemory;
 
 const original = Book(
   id: '/works/OL1W',
@@ -112,6 +114,40 @@ void main() {
     );
   });
 
+  testWidgets('reader can rate, comment and reply on a book', (tester) async {
+    final discussion = BookDiscussionService(
+      openDatabase: () =>
+          newDatabaseFactoryMemory().openDatabase('detail-discussion-test'),
+    );
+    await tester.pumpWidget(
+      host(
+        BookDetailPage(
+          book: original,
+          service: service,
+          userId: 'alice',
+          displayName: 'Alice',
+          discussionService: discussion,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Chưa có đánh giá'), findsOneWidget);
+    await tapVisible(tester, find.byTooltip('Đánh giá 5 sao'));
+    expect(find.text('5.0'), findsOneWidget);
+
+    await tester.ensureVisible(find.byType(TextField));
+    await tester.enterText(find.byType(TextField), 'Một câu chuyện đáng đọc.');
+    await tapVisible(tester, find.text('Gửi bình luận'));
+    expect(find.text('Một câu chuyện đáng đọc.'), findsOneWidget);
+    expect(find.text('Bình luận (1)'), findsOneWidget);
+
+    await tapVisible(tester, find.text('Trả lời'));
+    await tester.enterText(find.byType(TextField), 'Mình đồng ý.');
+    await tapVisible(tester, find.text('Gửi bình luận'));
+    expect(find.text('Mình đồng ý.'), findsOneWidget);
+    expect(find.text('Bình luận (2)'), findsOneWidget);
+  });
+
   testWidgets(
     'changing edition updates cover, ISBN, publisher, language and pages together',
     (tester) async {
@@ -147,7 +183,10 @@ void main() {
         find.textContaining('Nhà xuất bản: Second publisher'),
         findsOneWidget,
       );
-      expect(find.textContaining('Ngôn ngữ ấn bản: Tiếng Việt'), findsOneWidget);
+      expect(
+        find.textContaining('Ngôn ngữ ấn bản: Tiếng Việt'),
+        findsOneWidget,
+      );
       await tapVisible(tester, find.text('Thêm vào tủ sách'));
       expect(saved!.selectedEdition, same(secondEdition));
       expect(find.text('Đã thêm sách vào tủ.'), findsOneWidget);

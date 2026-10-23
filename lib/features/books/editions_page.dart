@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/widgets/book_cover.dart';
@@ -69,7 +70,7 @@ class _EditionsPageState extends State<EditionsPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Phiên bản xuất bản')),
+    appBar: AppBar(title: Text(context.tr("Phiên bản xuất bản"))),
     body: ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -92,7 +93,7 @@ class _EditionsPageState extends State<EditionsPage> {
                       BookCover(
                         book: Book(
                           id: widget.workId,
-                          title: edition.title ?? 'Chưa có dữ liệu',
+                          title: edition.title ?? context.tr("Chưa có dữ liệu"),
                           selectedEdition: edition,
                         ),
                         width: 76,
@@ -101,7 +102,7 @@ class _EditionsPageState extends State<EditionsPage> {
                       const SizedBox(width: 16),
                       Expanded(
                         child: Text(
-                          edition.title ?? 'Chưa có dữ liệu',
+                          edition.title ?? context.tr("Chưa có dữ liệu"),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
@@ -122,8 +123,8 @@ class _EditionsPageState extends State<EditionsPage> {
                     ),
                     label: Text(
                       edition.id == widget.selectedEditionId
-                          ? 'Đang chọn'
-                          : 'Chọn phiên bản',
+                          ? context.tr("Đang chọn")
+                          : context.tr("Chọn phiên bản"),
                     ),
                   ),
                 ],
@@ -135,10 +136,10 @@ class _EditionsPageState extends State<EditionsPage> {
         else if (_error != null)
           ErrorView(message: _error!, onRetry: _load)
         else if (_editions.isEmpty)
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(24),
             child: Text(
-              'Chưa có phiên bản xuất bản.',
+              context.tr("Chưa có phiên bản xuất bản."),
               textAlign: TextAlign.center,
             ),
           )
@@ -146,7 +147,7 @@ class _EditionsPageState extends State<EditionsPage> {
           OutlinedButton.icon(
             onPressed: _load,
             icon: const Icon(Icons.expand_more),
-            label: const Text('Tải thêm phiên bản'),
+            label: Text(context.tr("Tải thêm phiên bản")),
           ),
       ],
     ),

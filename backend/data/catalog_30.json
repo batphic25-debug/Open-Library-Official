@@ -1,0 +1,1310 @@
+[
+  {
+    "id": "/works/OL17930368W",
+    "title": "Atomic Habits",
+    "authors": [
+      "James Clear"
+    ],
+    "categories": [
+      "Phát triển bản thân"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Atomic Habits.png",
+    "firstPublishYear": 2016,
+    "selectedEdition": {
+      "key": "/books/OL36647151M",
+      "title": "Atomic Habits",
+      "works": [
+        {
+          "key": "/works/OL17930368W"
+        }
+      ],
+      "isbn_10": [
+        "1804220205"
+      ],
+      "isbn_13": [
+        "9781804220207"
+      ],
+      "publishers": [
+        "James Clear"
+      ],
+      "publish_date": "Oct 16, 2018",
+      "number_of_pages": 168,
+      "covers": [
+        12539702
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL17930368W",
+    "verifiedAt": "2026-10-13",
+    "description": "Những thay đổi nhỏ trong thói quen hằng ngày có thể tạo ra kết quả dài hạn. Cuốn sách trình bày cách xây dựng hành vi hữu ích và giảm những thói quen không mong muốn.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL36647151M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL10263W",
+    "title": "The Little Prince",
+    "authors": [
+      "Antoine de Saint-Exupéry"
+    ],
+    "categories": [
+      "Thiếu nhi"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Little Prince.png",
+    "firstPublishYear": null,
+    "selectedEdition": {
+      "key": "/books/OL56384519M",
+      "title": "Piccolo Principe",
+      "works": [
+        {
+          "key": "/works/OL10263W"
+        }
+      ],
+      "isbn_13": [
+        "9781494975081"
+      ],
+      "publishers": [
+        "CreateSpace Independent Publishing Platform"
+      ],
+      "publish_date": "2014",
+      "number_of_pages": 96,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL10263W",
+    "verifiedAt": "2026-10-13",
+    "description": "Cuộc gặp giữa một phi công và cậu bé đến từ hành tinh nhỏ mở ra những suy ngẫm về tình bạn, tình yêu và trách nhiệm.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL56384519M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL82563W",
+    "title": "Harry Potter and the Philosopher’s Stone",
+    "authors": [
+      "J. K. Rowling"
+    ],
+    "categories": [
+      "Kỳ ảo"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Harry Potter and the Philosopher’s Stone.png",
+    "firstPublishYear": 1997,
+    "selectedEdition": {
+      "key": "/books/OL61027601M",
+      "title": "Harry Potter and the Philosopher's Stone",
+      "works": [
+        {
+          "key": "/works/OL82563W"
+        }
+      ],
+      "isbn_10": [
+        "0747532745"
+      ],
+      "publishers": [
+        "Bloomsbury"
+      ],
+      "publish_date": "1997",
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        15155833
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL82563W",
+    "verifiedAt": "2026-10-13",
+    "description": "Harry bước vào trường Hogwarts và khám phá thế giới phù thủy. Cùng những người bạn mới, cậu tìm hiểu bí mật quanh Hòn đá Phù thủy.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL61027601M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL1168083W",
+    "title": "1984",
+    "authors": [
+      "George Orwell"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/1984.png",
+    "firstPublishYear": null,
+    "selectedEdition": {
+      "key": "/books/OL62597712M",
+      "title": "1984",
+      "works": [
+        {
+          "key": "/works/OL1168083W"
+        }
+      ],
+      "isbn_13": [
+        "9788702291872"
+      ],
+      "publishers": [
+        "Gyldendal"
+      ],
+      "publish_date": "2026",
+      "number_of_pages": 332,
+      "languages": [
+        {
+          "key": "/languages/dan"
+        }
+      ],
+      "covers": [
+        15258673
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL1168083W",
+    "verifiedAt": "2026-10-13",
+    "description": "Winston Smith sống dưới một chế độ kiểm soát ngôn ngữ, ký ức và đời sống riêng tư. Khát vọng tự do của anh đối diện bộ máy quyền lực toàn trị.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL62597712M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL66554W",
+    "title": "Pride and Prejudice",
+    "authors": [
+      "Jane Austen"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Pride and Prejudice.png",
+    "firstPublishYear": 1813,
+    "selectedEdition": {
+      "key": "/books/OL47044678M",
+      "title": "Pride and Prejudice",
+      "works": [
+        {
+          "key": "/works/OL66554W"
+        }
+      ],
+      "publishers": [
+        "Nelson Doubleday, Inc."
+      ],
+      "publish_date": "xxxx",
+      "number_of_pages": 282,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        14348537
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL66554W",
+    "verifiedAt": "2026-10-13",
+    "description": "Elizabeth Bennet và Fitzwilliam Darcy phải vượt qua những đánh giá ban đầu về nhau. Câu chuyện đặt tình yêu bên cạnh địa vị, gia đình và định kiến xã hội.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL47044678M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL468431W",
+    "title": "The Great Gatsby",
+    "authors": [
+      "F. Scott Fitzgerald"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Great Gatsby.png",
+    "firstPublishYear": 1920,
+    "selectedEdition": {
+      "key": "/books/OL22570129M",
+      "title": "The great Gatsby",
+      "works": [
+        {
+          "key": "/works/OL468431W"
+        }
+      ],
+      "isbn_13": [
+        "9780199536405"
+      ],
+      "publishers": [
+        "Oxford University Press"
+      ],
+      "publish_date": "2008",
+      "number_of_pages": 151,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        10590366
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL468431W",
+    "verifiedAt": "2026-10-13",
+    "description": "Qua lời kể của Nick Carraway, cuộc đời Jay Gatsby hiện lên cùng giấc mơ tình yêu và sự giàu có. Bối cảnh nước Mỹ thập niên 1920 làm nổi bật khoảng cách giữa khát vọng và thực tế.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL22570129M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL3140822W",
+    "title": "To Kill a Mockingbird",
+    "authors": [
+      "Harper Lee"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/To Kill a Mockingbird.png",
+    "firstPublishYear": 1960,
+    "selectedEdition": {
+      "key": "/books/OL26467746M",
+      "title": "To Kill a Mockingbird",
+      "works": [
+        {
+          "key": "/works/OL3140822W"
+        }
+      ],
+      "publishers": [
+        "J. B. Lippincott"
+      ],
+      "publish_date": "1960",
+      "number_of_pages": 296,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        14351077
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL3140822W",
+    "verifiedAt": "2026-10-13",
+    "description": "Tuổi thơ của Scout Finch gắn với một vụ xét xử tại miền Nam nước Mỹ. Câu chuyện đặt ra câu hỏi về công lý, định kiến chủng tộc và lòng cảm thông.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL26467746M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL1095427W",
+    "title": "Jane Eyre",
+    "authors": [
+      "Charlotte Brontë"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Jane Eyre.png",
+    "firstPublishYear": 1847,
+    "selectedEdition": {
+      "key": "/books/OL6969829M",
+      "title": "Jane Eyre.",
+      "works": [
+        {
+          "key": "/works/OL1095427W"
+        }
+      ],
+      "publishers": [
+        "Harper & brothers"
+      ],
+      "publish_date": "1848",
+      "number_of_pages": 174,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        8235363,
+        5873948
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL1095427W",
+    "verifiedAt": "2026-10-13",
+    "description": "Jane Eyre tìm kiếm tình yêu và sự độc lập trong hành trình từ một tuổi thơ khó khăn đến cuộc sống trưởng thành.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL6969829M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL29983W",
+    "title": "Little Women",
+    "authors": [
+      "Louisa May Alcott"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Little Women.png",
+    "firstPublishYear": 1848,
+    "selectedEdition": {
+      "key": "/books/OL27300715M",
+      "title": "Little Women",
+      "works": [
+        {
+          "key": "/works/OL29983W"
+        }
+      ],
+      "isbn_13": [
+        "9781423652113"
+      ],
+      "publishers": [
+        "Gibbs Smith"
+      ],
+      "publish_date": "2019",
+      "number_of_pages": 507,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        8775559
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL29983W",
+    "verifiedAt": "2026-10-13",
+    "description": "Bốn chị em nhà March trưởng thành với những ước mơ và lựa chọn khác nhau. Tình thân giúp họ đối diện khó khăn và thay đổi.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL27300715M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL1168007W",
+    "title": "Animal Farm",
+    "authors": [
+      "George Orwell"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Animal Farm.png",
+    "firstPublishYear": 1945,
+    "selectedEdition": {
+      "key": "/books/OL23269355M",
+      "title": "Animal Farm",
+      "works": [
+        {
+          "key": "/works/OL1168007W"
+        }
+      ],
+      "publishers": [
+        "Harcourt, Brace and Company"
+      ],
+      "publish_date": "1946",
+      "number_of_pages": 118,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        15246098,
+        15228884,
+        15222335,
+        15139354,
+        15113751,
+        11261770
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL1168007W",
+    "verifiedAt": "2026-10-13",
+    "description": "Các con vật nổi dậy giành quyền quản lý một trang trại. Lý tưởng bình đẳng dần bị biến dạng khi quyền lực tập trung vào một nhóm.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL23269355M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL796465W",
+    "title": "The Alchemist",
+    "authors": [
+      "Paulo Coelho"
+    ],
+    "categories": [
+      "Văn học"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Alchemist.png",
+    "firstPublishYear": null,
+    "selectedEdition": {
+      "key": "/books/OL9242938M",
+      "title": "The Alchemist",
+      "works": [
+        {
+          "key": "/works/OL796465W"
+        }
+      ],
+      "isbn_10": [
+        "0061122416"
+      ],
+      "isbn_13": [
+        "9780061122415"
+      ],
+      "publishers": [
+        "HarperOne"
+      ],
+      "publish_date": "April 25, 2006",
+      "number_of_pages": 197,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        45762
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL796465W",
+    "verifiedAt": "2026-10-13",
+    "description": "Santiago rời cuộc sống chăn cừu để theo đuổi giấc mơ về kho báu. Hành trình đưa chàng qua những cuộc gặp và lựa chọn về điều mình thật sự tìm kiếm.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL9242938M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL27482W",
+    "title": "The Hobbit",
+    "authors": [
+      "J. R. R. Tolkien"
+    ],
+    "categories": [
+      "Kỳ ảo"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Hobbit.png",
+    "firstPublishYear": 1937,
+    "selectedEdition": {
+      "key": "/books/OL51711263M",
+      "title": "The Hobbit",
+      "works": [
+        {
+          "key": "/works/OL27482W"
+        }
+      ],
+      "publishers": [
+        "Ballantine Books"
+      ],
+      "publish_date": "1967-08",
+      "number_of_pages": 287,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        14627509
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL27482W",
+    "verifiedAt": "2026-10-13",
+    "description": "Bilbo Baggins rời vùng Shire để tham gia chuyến phiêu lưu cùng những người lùn. Hành trình thử thách lòng can đảm và sự nhanh trí của một hobbit vốn yêu cuộc sống yên bình.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL51711263M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL27513W",
+    "title": "The Fellowship of the Ring",
+    "authors": [
+      "J. R. R. Tolkien"
+    ],
+    "categories": [
+      "Kỳ ảo"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Fellowship of the Ring.png",
+    "firstPublishYear": 1954,
+    "selectedEdition": {
+      "key": "/books/OL51708686M",
+      "title": "The Fellowship of the Ring",
+      "works": [
+        {
+          "key": "/works/OL27513W"
+        }
+      ],
+      "publishers": [
+        "George Allen & Unwin Ltd"
+      ],
+      "publish_date": "1963",
+      "number_of_pages": 423,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        14627060
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL27513W",
+    "verifiedAt": "2026-10-13",
+    "description": "Frodo cùng những người đồng hành nhận nhiệm vụ đưa chiếc nhẫn đầy quyền lực ra khỏi sự truy đuổi của bóng tối.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL51708686M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL71037W",
+    "title": "The Lion, the Witch and the Wardrobe",
+    "authors": [
+      "C. S. Lewis"
+    ],
+    "categories": [
+      "Kỳ ảo"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Lion, the Witch and the Wardrobe.png",
+    "firstPublishYear": 1950,
+    "selectedEdition": {
+      "key": "/books/OL7265111M",
+      "title": "The Lion, the Witch and the Wardrobe",
+      "works": [
+        {
+          "key": "/works/OL71037W"
+        }
+      ],
+      "isbn_10": [
+        "0020442203"
+      ],
+      "isbn_13": [
+        "9780020442202"
+      ],
+      "publishers": [
+        "Collier Books"
+      ],
+      "publish_date": "1970",
+      "number_of_pages": 192,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        8441376
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL71037W",
+    "verifiedAt": "2026-10-13",
+    "description": "Bốn anh chị em bước qua chiếc tủ áo vào Narnia. Họ cùng các cư dân nơi đây đối diện quyền lực của Phù thủy Trắng.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL7265111M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL893414W",
+    "title": "Dune",
+    "authors": [
+      "Frank Herbert"
+    ],
+    "categories": [
+      "Khoa học viễn tưởng"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Dune.png",
+    "firstPublishYear": 1965,
+    "selectedEdition": {
+      "key": "/books/OL32848840M",
+      "title": "Dune",
+      "works": [
+        {
+          "key": "/works/OL893414W"
+        }
+      ],
+      "isbn_10": [
+        "1444738208"
+      ],
+      "isbn_13": [
+        "9781444738209"
+      ],
+      "publishers": [
+        "Hodder",
+        "Hodder Paperback"
+      ],
+      "publish_date": "Jul 22, 2006",
+      "number_of_pages": 604,
+      "covers": [
+        11481354
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL893414W",
+    "verifiedAt": "2026-10-13",
+    "description": "Trên hành tinh sa mạc Arrakis, gia đình Atreides bước vào cuộc tranh giành quyền lực và nguồn tài nguyên quý giá. Paul Atreides phải đối diện vận mệnh của mình.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL32848840M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL64365W",
+    "title": "Brave New World",
+    "authors": [
+      "Aldous Huxley"
+    ],
+    "categories": [
+      "Khoa học viễn tưởng"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Brave New World.png",
+    "firstPublishYear": 1932,
+    "selectedEdition": {
+      "key": "/books/OL32915616M",
+      "title": "Brave New World",
+      "works": [
+        {
+          "key": "/works/OL64365W"
+        }
+      ],
+      "isbn_10": [
+        "1444474790"
+      ],
+      "isbn_13": [
+        "9781444474794"
+      ],
+      "publishers": [
+        "ValdeBooks"
+      ],
+      "publish_date": "2022",
+      "number_of_pages": 176,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        14847160,
+        11540816
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL64365W",
+    "verifiedAt": "2026-10-13",
+    "description": "Một xã hội tổ chức đời sống bằng công nghệ và điều kiện hóa con người tưởng như đã loại bỏ đau khổ. Câu chuyện chất vấn cái giá của sự ổn định ấy.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL32915616M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL103123W",
+    "title": "Fahrenheit 451",
+    "authors": [
+      "Ray Bradbury"
+    ],
+    "categories": [
+      "Khoa học viễn tưởng"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Fahrenheit 451.png",
+    "firstPublishYear": 1953,
+    "selectedEdition": {
+      "key": "/books/OL40236195M",
+      "title": "Fahrenheit 451",
+      "works": [
+        {
+          "key": "/works/OL103123W"
+        }
+      ],
+      "publishers": [
+        "Corgi Books"
+      ],
+      "publish_date": "1960",
+      "number_of_pages": 159,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        12993656
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL103123W",
+    "verifiedAt": "2026-10-13",
+    "description": "Guy Montag làm nghề thiêu hủy sách trong một xã hội ngăn cản việc đọc. Những cuộc gặp khiến anh hoài nghi công việc và thế giới quanh mình.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL40236195M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL450063W",
+    "title": "Frankenstein",
+    "authors": [
+      "Mary Shelley"
+    ],
+    "categories": [
+      "Kinh dị"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Frankenstein.png",
+    "firstPublishYear": 1818,
+    "selectedEdition": {
+      "key": "/books/OL35649409M",
+      "title": "Frankenstein",
+      "works": [
+        {
+          "key": "/works/OL450063W"
+        }
+      ],
+      "isbn_10": [
+        "9944184934"
+      ],
+      "isbn_13": [
+        "9789944184939"
+      ],
+      "publishers": [
+        "Antik Kitap"
+      ],
+      "publish_date": "Nov 07, 2016",
+      "covers": [
+        12356249
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL450063W",
+    "verifiedAt": "2026-10-13",
+    "description": "Victor Frankenstein tạo ra một sinh vật rồi chối bỏ trách nhiệm với nó. Tác phẩm khám phá tham vọng, sự cô độc và hậu quả của việc bị ruồng bỏ.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL35649409M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL85892W",
+    "title": "Dracula",
+    "authors": [
+      "Bram Stoker"
+    ],
+    "categories": [
+      "Kinh dị"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Dracula.png",
+    "firstPublishYear": 1897,
+    "selectedEdition": {
+      "key": "/books/OL35373336M",
+      "title": "Dracula",
+      "works": [
+        {
+          "key": "/works/OL85892W"
+        }
+      ],
+      "isbn_10": [
+        "6052492848"
+      ],
+      "isbn_13": [
+        "9786052492840"
+      ],
+      "publishers": [
+        "Dorlion Yayinevi"
+      ],
+      "publish_date": "Oct 28, 2021",
+      "number_of_pages": 404,
+      "covers": [
+        12216503
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL85892W",
+    "verifiedAt": "2026-10-13",
+    "description": "Qua thư từ và nhật ký, một nhóm người dần khám phá mối đe dọa từ Bá tước Dracula và tìm cách ngăn chặn hắn.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL35373336M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL471565W",
+    "title": "And Then There Were None",
+    "authors": [
+      "Agatha Christie"
+    ],
+    "categories": [
+      "Trinh thám"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/And Then There Were None.png",
+    "firstPublishYear": 1939,
+    "selectedEdition": {
+      "key": "/books/OL32520899M",
+      "title": "And Then There Were None",
+      "works": [
+        {
+          "key": "/works/OL471565W"
+        }
+      ],
+      "publishers": [
+        "Dodd, Mead & Company"
+      ],
+      "publish_date": "1966",
+      "number_of_pages": 183,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        11172296
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL471565W",
+    "verifiedAt": "2026-10-13",
+    "description": "Mười người được mời tới một hòn đảo biệt lập. Khi những cái chết xảy ra liên tiếp, họ phải đối diện quá khứ và nghi ngờ lẫn nhau.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL32520899M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL471576W",
+    "title": "Murder on the Orient Express",
+    "authors": [
+      "Agatha Christie"
+    ],
+    "categories": [
+      "Trinh thám"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Murder on the Orient Express.png",
+    "firstPublishYear": 1933,
+    "selectedEdition": {
+      "key": "/books/OL32440766M",
+      "title": "Murder on the Orient Express",
+      "works": [
+        {
+          "key": "/works/OL471576W"
+        }
+      ],
+      "isbn_13": [
+        "9771741749015"
+      ],
+      "publishers": [
+        "Planet Three Publishing Network"
+      ],
+      "publish_date": "xxxx",
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        11100465
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL471576W",
+    "verifiedAt": "2026-10-13",
+    "description": "Một vụ án mạng xảy ra trên chuyến tàu Phương Đông bị tuyết cản đường. Hercule Poirot lần theo lời khai của những hành khách để tìm sự thật.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL32440766M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL262421W",
+    "title": "The Adventures of Sherlock Holmes",
+    "authors": [
+      "Arthur Conan Doyle"
+    ],
+    "categories": [
+      "Trinh thám"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Adventures of Sherlock Holmes.png",
+    "firstPublishYear": 1892,
+    "selectedEdition": {
+      "key": "/books/OL24349267M",
+      "title": "The Adventures of Sherlock Holmes",
+      "works": [
+        {
+          "key": "/works/OL262421W"
+        }
+      ],
+      "publishers": [
+        "George Newnes, Limited"
+      ],
+      "publish_date": "1892",
+      "number_of_pages": 317,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        6717853,
+        6464994,
+        7258892,
+        -1
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL262421W",
+    "verifiedAt": "2026-10-13",
+    "description": "Tập truyện kể các vụ điều tra của Sherlock Holmes qua lời thuật của bác sĩ Watson. Những chi tiết nhỏ trở thành chìa khóa giải mã bí ẩn.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL24349267M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL262454W",
+    "title": "The Hound of the Baskervilles",
+    "authors": [
+      "Arthur Conan Doyle"
+    ],
+    "categories": [
+      "Trinh thám"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Hound of the Baskervilles.png",
+    "firstPublishYear": 1900,
+    "selectedEdition": {
+      "key": "/books/OL45884134M",
+      "title": "The Hound of the Baskervilles",
+      "works": [
+        {
+          "key": "/works/OL262454W"
+        }
+      ],
+      "isbn_10": [
+        "0719515750"
+      ],
+      "isbn_13": [
+        "9780719515750"
+      ],
+      "publishers": [
+        "John Murray",
+        "Dell D302"
+      ],
+      "publish_date": "1968",
+      "number_of_pages": 183,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        13418096
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL262454W",
+    "verifiedAt": "2026-10-13",
+    "description": "Sherlock Holmes và bác sĩ Watson điều tra lời nguyền đeo bám gia đình Baskerville cùng những sự kiện đáng ngờ trên vùng đồng hoang.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL45884134M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL138052W",
+    "title": "Alice’s Adventures in Wonderland",
+    "authors": [
+      "Lewis Carroll"
+    ],
+    "categories": [
+      "Thiếu nhi"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Alice’s Adventures in Wonderland.png",
+    "firstPublishYear": 1865,
+    "selectedEdition": {
+      "key": "/books/OL31754751M",
+      "title": "Alice's Adventures in Wonderland",
+      "works": [
+        {
+          "key": "/works/OL138052W"
+        }
+      ],
+      "publishers": [
+        "Macmillan and Co."
+      ],
+      "publish_date": "1866",
+      "number_of_pages": 192,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        10527843
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL138052W",
+    "verifiedAt": "2026-10-13",
+    "description": "Alice theo chân một chú thỏ vào thế giới kỳ lạ, nơi quy tắc và ngôn ngữ thường xuyên đảo lộn. Những cuộc gặp mở ra chuyến phiêu lưu giàu tưởng tượng.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL31754751M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL483391W",
+    "title": "Charlotte’s Web",
+    "authors": [
+      "E. B. White"
+    ],
+    "categories": [
+      "Thiếu nhi"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Charlotte’s Web.png",
+    "firstPublishYear": 1952,
+    "selectedEdition": {
+      "key": "/books/OL23248482M",
+      "title": "Charlotte's Web",
+      "works": [
+        {
+          "key": "/works/OL483391W"
+        }
+      ],
+      "publishers": [
+        "Harper & Row"
+      ],
+      "publish_date": "1952",
+      "number_of_pages": 184,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        8461797,
+        8311477,
+        8311473
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL483391W",
+    "verifiedAt": "2026-10-13",
+    "description": "Tình bạn giữa chú lợn Wilbur và cô nhện Charlotte giúp thay đổi số phận của Wilbur. Câu chuyện nói về sự quan tâm, mất mát và lòng biết ơn.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL23248482M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL45846W",
+    "title": "Matilda",
+    "authors": [
+      "Roald Dahl"
+    ],
+    "categories": [
+      "Thiếu nhi"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Matilda.png",
+    "firstPublishYear": 1988,
+    "selectedEdition": {
+      "key": "/books/OL32765318M",
+      "title": "Matilda",
+      "works": [
+        {
+          "key": "/works/OL45846W"
+        }
+      ],
+      "isbn_13": [
+        "9780670824397"
+      ],
+      "publishers": [
+        "Viking"
+      ],
+      "publish_date": "1988",
+      "number_of_pages": 240,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        12889769
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL45846W",
+    "verifiedAt": "2026-10-13",
+    "description": "Matilda yêu sách và có trí thông minh đặc biệt. Cô bé tìm cách đối diện người lớn bất công với sự giúp đỡ của một cô giáo tử tế.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL32765318M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL1063267W",
+    "title": "How to Win Friends and Influence People",
+    "authors": [
+      "Dale Carnegie"
+    ],
+    "categories": [
+      "Phát triển bản thân"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/How to Win Friends and Influence People.png",
+    "firstPublishYear": 1936,
+    "selectedEdition": {
+      "key": "/books/OL62656710M",
+      "title": "How to Win Friends and Influence People",
+      "works": [
+        {
+          "key": "/works/OL1063267W"
+        }
+      ],
+      "isbn_13": [
+        "9781785044229"
+      ],
+      "publishers": [
+        "Vermilion"
+      ],
+      "publish_date": "2022",
+      "number_of_pages": 320,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        15262530
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL1063267W",
+    "verifiedAt": "2026-10-13",
+    "description": "Cuốn sách trình bày những nguyên tắc giao tiếp và xây dựng quan hệ, nhấn mạnh việc lắng nghe và quan tâm tới người khác.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL62656710M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL2629977W",
+    "title": "The 7 Habits of Highly Effective People",
+    "authors": [
+      "Stephen R. Covey"
+    ],
+    "categories": [
+      "Phát triển bản thân"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The 7 Habits of Highly Effective People.png",
+    "firstPublishYear": 1989,
+    "selectedEdition": {
+      "key": "/books/OL28136651M",
+      "title": "The 7 Habits of Highly Effective People",
+      "works": [
+        {
+          "key": "/works/OL2629977W"
+        }
+      ],
+      "isbn_10": [
+        "1982137134"
+      ],
+      "isbn_13": [
+        "9781982137137"
+      ],
+      "publishers": [
+        "Simon & Schuster"
+      ],
+      "publish_date": "May 19, 2020",
+      "number_of_pages": 464,
+      "covers": [
+        10079937
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL2629977W",
+    "verifiedAt": "2026-10-13",
+    "description": "Tác giả đề xuất bảy thói quen hướng tới sự chủ động, xác định ưu tiên và hợp tác trong đời sống cá nhân cũng như công việc.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL28136651M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL17713267W",
+    "title": "Deep Work",
+    "authors": [
+      "Cal Newport"
+    ],
+    "categories": [
+      "Phát triển bản thân"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/Cal Newport.png",
+    "firstPublishYear": 2016,
+    "selectedEdition": {
+      "key": "/books/OL26314691M",
+      "title": "Deep Work",
+      "works": [
+        {
+          "key": "/works/OL17713267W"
+        }
+      ],
+      "isbn_10": [
+        "1455586692"
+      ],
+      "isbn_13": [
+        "9781455586691"
+      ],
+      "publishers": [
+        "Grand Central Publishing"
+      ],
+      "publish_date": "2016",
+      "number_of_pages": 295,
+      "languages": [
+        {
+          "key": "/languages/eng"
+        }
+      ],
+      "covers": [
+        14859612,
+        15217838,
+        14845480,
+        14831778,
+        7988607,
+        -1
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL17713267W",
+    "verifiedAt": "2026-10-13",
+    "description": "Cuốn sách bàn về giá trị của sự tập trung sâu trong công việc trí óc và các cách hạn chế xao nhãng.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL26314691M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  },
+  {
+    "id": "/works/OL21640039W",
+    "title": "The Psychology of Money",
+    "authors": [
+      "Morgan Housel"
+    ],
+    "categories": [
+      "Tài chính"
+    ],
+    "coverAsset": "assets/images/book_placeholder.png_files/The Psychology of Money.png",
+    "firstPublishYear": 2020,
+    "selectedEdition": {
+      "key": "/books/OL29412746M",
+      "title": "The Psychology of Money",
+      "works": [
+        {
+          "key": "/works/OL21640039W"
+        }
+      ],
+      "isbn_10": [
+        "9390166934"
+      ],
+      "publishers": [
+        "Harriman House"
+      ],
+      "publish_date": "Sep 08, 2020",
+      "number_of_pages": 256,
+      "languages": [
+        {
+          "key": "/languages/ind"
+        }
+      ],
+      "covers": [
+        14653525,
+        12824425,
+        10389354,
+        -1
+      ]
+    },
+    "coverIsIllustration": true,
+    "sourceUrl": "https://openlibrary.org/works/OL21640039W",
+    "verifiedAt": "2026-10-13",
+    "description": "Những câu chuyện về tiền bạc làm rõ vai trò của hành vi, kỳ vọng và hoàn cảnh cá nhân trong các quyết định tài chính.",
+    "descriptionSource": "Nhóm biên soạn",
+    "editionSourceUrl": "https://openlibrary.org/books/OL29412746M",
+    "coverCredit": "Ảnh minh họa có sẵn trong dự án, không phải bìa ấn bản được xác minh"
+  }
+]

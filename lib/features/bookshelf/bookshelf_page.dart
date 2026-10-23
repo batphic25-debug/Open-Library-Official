@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
@@ -73,8 +74,10 @@ class _BookshelfPageState extends State<BookshelfPage> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Chưa lưu được thay đổi. Vui lòng thử lại.'),
+          SnackBar(
+            content: Text(
+              context.tr("Chưa lưu được thay đổi. Vui lòng thử lại."),
+            ),
           ),
         );
       }
@@ -90,18 +93,21 @@ class _BookshelfPageState extends State<BookshelfPage> {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Xóa khỏi tủ sách?'),
+          title: Text(context.tr("Xóa khỏi tủ sách?")),
           content: Text(
-            '“${saved.book.title}”, tiến độ và ghi chú của sách sẽ bị xóa khỏi tài khoản này.',
+            context.tr(
+              "“{0}”, tiến độ và ghi chú của sách sẽ bị xóa khỏi tài khoản này.",
+              [saved.book.title],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Hủy'),
+              child: Text(context.tr("Hủy")),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Xóa'),
+              child: Text(context.tr("Xóa")),
             ),
           ],
         ),
@@ -123,18 +129,20 @@ class _BookshelfPageState extends State<BookshelfPage> {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Đổi phiên bản đã lưu?'),
-          content: const Text(
-            'Tiến độ về 0 và trạng thái chuyển sang Muốn đọc. Ghi chú được giữ lại.',
+          title: Text(context.tr("Đổi phiên bản đã lưu?")),
+          content: Text(
+            context.tr(
+              "Tiến độ về 0 và trạng thái chuyển sang Muốn đọc. Ghi chú được giữ lại.",
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Hủy'),
+              child: Text(context.tr("Hủy")),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Đổi phiên bản'),
+              child: Text(context.tr("Đổi phiên bản")),
             ),
           ],
         ),
@@ -158,7 +166,7 @@ class _BookshelfPageState extends State<BookshelfPage> {
     margin: const EdgeInsets.only(bottom: 12),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(18),
-      side: const BorderSide(color: AppTheme.border),
+      side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
     ),
     child: Padding(
       padding: const EdgeInsets.all(14),
@@ -168,8 +176,8 @@ class _BookshelfPageState extends State<BookshelfPage> {
           Semantics(
             button: true,
             label: _canContinue(saved)
-                ? 'Đọc tiếp ${saved.book.title}'
-                : 'Chi tiết ${saved.book.title}',
+                ? context.tr("Đọc tiếp {0}", [saved.book.title])
+                : context.tr("Chi tiết {0}", [saved.book.title]),
             child: InkWell(
               onTap: () => _openSaved(saved),
               borderRadius: BorderRadius.circular(10),
@@ -203,7 +211,7 @@ class _BookshelfPageState extends State<BookshelfPage> {
                       width: 32,
                       height: 32,
                       child: PopupMenuButton<String>(
-                        tooltip: 'Tùy chọn ${saved.book.title}',
+                        tooltip: context.tr("Tùy chọn {0}", [saved.book.title]),
                         enabled: !_busy,
                         padding: EdgeInsets.zero,
                         color: Theme.of(context).colorScheme.surface,
@@ -215,21 +223,21 @@ class _BookshelfPageState extends State<BookshelfPage> {
                             CheckedPopupMenuItem(
                               value: status.name,
                               checked: saved.status == status,
-                              child: Text(status.label),
+                              child: Text(context.tr(status.label)),
                             ),
                           const PopupMenuDivider(),
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'note',
-                            child: Text('Ghi chú'),
+                            child: Text(context.tr("Ghi chú")),
                           ),
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'edition',
-                            child: Text('Đổi phiên bản'),
+                            child: Text(context.tr("Đổi phiên bản")),
                           ),
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'delete',
                             child: Text(
-                              'Xóa khỏi tủ sách',
+                              context.tr("Xóa khỏi tủ sách"),
                               style: TextStyle(color: Colors.red),
                             ),
                           ),
@@ -239,7 +247,7 @@ class _BookshelfPageState extends State<BookshelfPage> {
                   ],
                 ),
                 Text(
-                  saved.book.authorLabel,
+                  context.tr(saved.book.authorLabel),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -261,21 +269,26 @@ class _BookshelfPageState extends State<BookshelfPage> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text('${(saved.progress! * 100).round()}%'),
+                        Text(
+                          '${(saved.pagesRead * 100) ~/ saved.totalPages!}%',
+                        ),
                       ],
                     ),
                   const SizedBox(height: 4),
                   if (_isOfflineReading(saved))
-                    const Text(
-                      'Vị trí đọc được lưu tự động',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF686B74)),
+                    Text(
+                      context.tr("Vị trí đọc được lưu tự động"),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     )
                   else if (saved.totalPages == null)
                     Text(
-                      'Đã đọc ${saved.pagesRead} trang',
-                      style: const TextStyle(
+                      context.tr("Đã đọc {0} trang", [saved.pagesRead]),
+                      style: TextStyle(
                         fontSize: 12,
-                        color: Color(0xFF686B74),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                 ],
@@ -289,13 +302,13 @@ class _BookshelfPageState extends State<BookshelfPage> {
                         onPressed: () => widget.onReadTap!(saved.book),
                         style: _editStyle(context),
                         icon: const Icon(Icons.menu_book_outlined, size: 20),
-                        label: const Text('Đọc tiếp'),
+                        label: Text(context.tr("Đọc tiếp")),
                       ),
                     TextButton.icon(
                       onPressed: _busy ? null : () => _progress(saved),
                       style: _editStyle(context),
                       icon: const Icon(Icons.edit_outlined, size: 20),
-                      label: const Text('Cập nhật'),
+                      label: Text(context.tr("Cập nhật")),
                     ),
                   ],
                 ),
@@ -359,13 +372,18 @@ class _BookshelfPageState extends State<BookshelfPage> {
                     width: 28,
                     height: 28,
                     child: PopupMenuButton<String>(
-                      tooltip: 'Tùy chọn ghi chú ${saved.book.title}',
+                      tooltip: context.tr("Tùy chọn ghi chú {0}", [
+                        saved.book.title,
+                      ]),
                       padding: EdgeInsets.zero,
                       color: Theme.of(context).colorScheme.surface,
                       surfaceTintColor: Colors.transparent,
                       onSelected: (_) => _note(saved),
-                      itemBuilder: (_) => const [
-                        PopupMenuItem(value: 'edit', child: Text('Chỉnh sửa')),
+                      itemBuilder: (_) => [
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Text(context.tr("Chỉnh sửa")),
+                        ),
                       ],
                     ),
                   ),
@@ -386,7 +404,7 @@ class _BookshelfPageState extends State<BookshelfPage> {
                 onPressed: () => _note(saved),
                 style: _editStyle(context),
                 icon: const Icon(Icons.edit_outlined, size: 20),
-                label: const Text('Chỉnh sửa'),
+                label: Text(context.tr("Chỉnh sửa")),
               ),
             ],
           ),
@@ -411,9 +429,9 @@ class _BookshelfPageState extends State<BookshelfPage> {
             children: [
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Tủ sách của tôi',
+                      context.tr("Tủ sách của tôi"),
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.w800,
@@ -423,7 +441,7 @@ class _BookshelfPageState extends State<BookshelfPage> {
                   ),
                   IconButton(
                     onPressed: widget.onExplore,
-                    tooltip: 'Khám phá sách',
+                    tooltip: context.tr("Khám phá sách"),
                     iconSize: 32,
                     icon: const Icon(Icons.search),
                   ),
@@ -470,7 +488,7 @@ class _BookshelfPageState extends State<BookshelfPage> {
                               ),
                               onPressed: () => setState(() => _status = status),
                               child: Text(
-                                status.label,
+                                context.tr(status.label),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -489,11 +507,14 @@ class _BookshelfPageState extends State<BookshelfPage> {
                   ),
                 )
               else if (widget.service.error != null) ...[
-                Text(widget.service.error!, textAlign: TextAlign.center),
+                Text(
+                  context.trError(widget.service.error!),
+                  textAlign: TextAlign.center,
+                ),
                 TextButton.icon(
                   onPressed: widget.service.loadBooks,
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Thử lại'),
+                  label: Text(context.tr("Thử lại")),
                 ),
               ] else ...[
                 if (books.isEmpty)
@@ -514,13 +535,15 @@ class _BookshelfPageState extends State<BookshelfPage> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Chưa có sách trong nhóm ${_status.label.toLowerCase()}.',
+                          context.tr("Chưa có sách trong nhóm {0}.", [
+                            context.tr(_status.label).toLowerCase(),
+                          ]),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 12),
                         FilledButton(
                           onPressed: widget.onExplore,
-                          child: const Text('Khám phá sách'),
+                          child: Text(context.tr("Khám phá sách")),
                         ),
                       ],
                     ),
@@ -530,9 +553,9 @@ class _BookshelfPageState extends State<BookshelfPage> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Ghi chú gần đây',
+                          context.tr("Ghi chú gần đây"),
                           style: TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.w800,
@@ -547,7 +570,11 @@ class _BookshelfPageState extends State<BookshelfPage> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(_showAllNotes ? 'Thu gọn' : 'Xem tất cả'),
+                            Text(
+                              _showAllNotes
+                                  ? context.tr("Thu gọn")
+                                  : context.tr("Xem tất cả"),
+                            ),
                             const Icon(Icons.chevron_right, size: 18),
                           ],
                         ),

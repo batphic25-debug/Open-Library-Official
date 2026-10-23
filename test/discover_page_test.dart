@@ -6,11 +6,14 @@ import 'package:open_library_client/core/theme/app_theme.dart';
 import 'package:open_library_client/core/widgets/book_card.dart';
 import 'package:open_library_client/core/widgets/book_cover.dart';
 import 'package:open_library_client/features/books/models/book.dart';
+import 'package:open_library_client/features/books/services/book_ranking_service.dart';
 import 'package:open_library_client/features/bookshelf/bookshelf_service.dart';
 import 'package:open_library_client/features/discovers/discover_page.dart';
 import 'package:open_library_client/features/discovers/widgets/category_selector.dart';
 import 'package:open_library_client/features/discovers/widgets/reading_card.dart';
 import 'package:sembast/sembast_memory.dart' show newDatabaseFactoryMemory;
+
+import 'bookshelf_service_test.dart' show book;
 
 const first = Book(
   id: '1',
@@ -25,6 +28,127 @@ Widget host(Widget child) => MaterialApp(
 );
 
 void main() {
+  testWidgets(
+    'completed books leave ongoing reading but remain in rankings and catalog',
+    (tester) async {
+      final shelf = BookshelfService(
+        userId: 'completion',
+        openDatabase: () =>
+            newDatabaseFactoryMemory().openDatabase('completion'),
+      );
+      addTearDown(shelf.dispose);
+      final added = shelf.addBook(book);
+      await tester.pumpWidget(
+        host(
+          DiscoverPage(
+            displayName: 'Reader',
+            loadBooks: () async => [book, second],
+            bookshelfService: shelf,
+            readingBooks: shelf.readingBooks,
+            onSearch: (_) {},
+            onBookTap: (_) {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await added;
+      final started = shelf.updateProgress(book.id, 99);
+      await tester.pumpAndSettle();
+      await started;
+      expect(find.byType(ReadingCard), findsOneWidget);
+      expect(find.byKey(ValueKey('featured-${book.id}')), findsOneWidget);
+      final completed = shelf.updateProgress(book.id, 100);
+      await tester.pumpAndSettle();
+      await completed;
+      expect(find.byType(ReadingCard), findsNothing);
+      expect(find.byKey(ValueKey('discover-rank-${book.id}')), findsOneWidget);
+      expect(find.byKey(ValueKey('featured-${book.id}')), findsOneWidget);
+      expect(find.byType(BookCard), findsNWidgets(2));
+      expect(
+        find.descendant(
+          of: find.byType(BookCard),
+          matching: find.text(book.title),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'ranking tabs sort actual views and update when a book is opened',
+    (tester) async {
+      var now = DateTime(2026, 9, 1);
+      final rankings = BookRankingService(
+        openDatabase: () =>
+            newDatabaseFactoryMemory().openDatabase('ranking-tabs'),
+        now: () => now,
+      );
+      const third = Book(id: '3', title: 'Book Three');
+      await tester.runAsync(() async {
+        for (var i = 0; i < 4; i++) {
+          await rankings.recordView(third.id);
+        }
+        now = DateTime(2026, 10, 18);
+        for (var i = 0; i < 3; i++) {
+          await rankings.recordView(first.id);
+        }
+        now = DateTime(2026, 10, 19);
+        await rankings.recordView(second.id);
+        await rankings.recordView(second.id);
+      });
+      Book? selected;
+      await tester.pumpWidget(
+        host(
+          DiscoverPage(
+            displayName: 'Reader',
+            loadBooks: () async => [first, second, third],
+            rankingService: rankings,
+            onSearch: (_) {},
+            onBookTap: (book) => selected = book,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      Finder row(String id) => find.byKey(ValueKey('discover-rank-$id'));
+      expect(
+        tester.getTopLeft(row('2')).dy,
+        lessThan(tester.getTopLeft(row('1')).dy),
+      );
+      await tester.ensureVisible(row('2'));
+      await tester.tap(row('2'));
+      expect(selected, same(second));
+      for (final (label, topId) in [('Tuần', '1'), ('Tất cả', '3')]) {
+        final tab = find.widgetWithText(OutlinedButton, label);
+        await tester.ensureVisible(tab);
+        await tester.tap(tab);
+        await tester.pumpAndSettle();
+        expect(
+          find.descendant(of: row(topId), matching: find.text('01')),
+          findsOneWidget,
+        );
+      }
+      final day = find.widgetWithText(OutlinedButton, 'Ngày');
+      await tester.tap(day);
+      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        for (var i = 0; i < 3; i++) {
+          await rankings.recordView(first.id);
+        }
+      });
+      await tester.pumpAndSettle();
+      expect(
+        find.descendant(of: row('1'), matching: find.text('01')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: row('1'), matching: find.text('3 lượt xem')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets(
     'view all expands catalog and recommendations open the exact book',
     (tester) async {
@@ -63,8 +187,12 @@ void main() {
       );
       expect(tester.getSize(firstCover), tester.getSize(secondCover));
       expect(tester.getSize(firstCard), tester.getSize(secondCard));
-      await tester.ensureVisible(find.text('Title 3'));
-      await tester.tap(find.text('Title 3'));
+      final title3 = find.descendant(
+        of: find.byType(BookCard),
+        matching: find.text('Title 3'),
+      );
+      await tester.ensureVisible(title3);
+      await tester.tap(title3);
       expect(selected, same(catalog[3]));
       await tester.ensureVisible(find.text('Xem thêm'));
       await tester.tap(find.text('Xem thêm'));
@@ -74,11 +202,27 @@ void main() {
       await tester.tap(find.text('Thu gọn'));
       await tester.pumpAndSettle();
       expect(find.byType(BookCard), findsNWidgets(4));
-      await tester.ensureVisible(find.widgetWithText(ChoiceChip, 'Kỳ ảo'));
-      await tester.tap(find.widgetWithText(ChoiceChip, 'Kỳ ảo'));
+      await tester.ensureVisible(
+        find.descendant(
+          of: find.byType(CategorySelector),
+          matching: find.text('Kỳ ảo'),
+        ),
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byType(CategorySelector),
+          matching: find.text('Kỳ ảo'),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(find.text('Title 0'), findsNothing);
-      expect(find.text('Title 7'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(BookCard),
+          matching: find.text('Title 7'),
+        ),
+        findsOneWidget,
+      );
     },
   );
 
@@ -107,7 +251,12 @@ void main() {
         200,
         scrollable: find.byType(Scrollable).first,
       );
-      await tester.tap(find.widgetWithText(ChoiceChip, 'Kỳ ảo'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(CategorySelector),
+          matching: find.text('Kỳ ảo'),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(find.byType(BookCard), findsOneWidget);
       final filteredBook = find.descendant(
@@ -118,9 +267,19 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(filteredBook);
       expect(selected, same(second));
-      await tester.ensureVisible(find.widgetWithText(ChoiceChip, 'Tất cả'));
+      await tester.ensureVisible(
+        find.descendant(
+          of: find.byType(CategorySelector),
+          matching: find.text('Tất cả'),
+        ),
+      );
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(ChoiceChip, 'Tất cả'));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(CategorySelector),
+          matching: find.text('Tất cả'),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(find.byType(BookCard), findsNWidgets(2));
     },
@@ -156,11 +315,7 @@ void main() {
     expect(find.text(highlighted.description!), findsOneWidget);
     final featured = find.byKey(const ValueKey('featured-1'));
     expect(
-      find.descendant(of: featured, matching: find.text('Văn học')),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(of: featured, matching: find.text('96 trang')),
+      find.descendant(of: featured, matching: find.text('Văn học · 96 trang')),
       findsOneWidget,
     );
     final featuredCover = tester.widget<BookCover>(
@@ -173,6 +328,71 @@ void main() {
     expect(selected, same(highlighted));
   });
 
+  testWidgets('curated strip and ranked list open the selected book', (
+    tester,
+  ) async {
+    Book? selected;
+    await tester.pumpWidget(
+      host(
+        DiscoverPage(
+          displayName: 'Reader',
+          loadBooks: () async => [first, second],
+          onSearch: (_) {},
+          onBookTap: (book) => selected = book,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final strip = find.byKey(const ValueKey('discover-strip-2'));
+    await tester.ensureVisible(strip);
+    await tester.tap(strip);
+    expect(selected, same(second));
+    final ranked = find.byKey(const ValueKey('discover-rank-1'));
+    await tester.ensureVisible(ranked);
+    await tester.tap(ranked);
+    expect(selected, same(first));
+  });
+
+  testWidgets('discover follows light and dark appearance', (tester) async {
+    Widget page(ThemeData theme) => MaterialApp(
+      theme: theme,
+      home: Scaffold(
+        body: DiscoverPage(
+          displayName: 'Reader',
+          loadBooks: () async => [first],
+          onSearch: (_) {},
+          onBookTap: (_) {},
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(page(AppTheme.light));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<ColoredBox>(find.byKey(const ValueKey('discover-background')))
+          .color,
+      AppTheme.canvas,
+    );
+    expect(
+      tester.widget<Text>(find.text('Sách nổi bật')).style?.color,
+      AppTheme.ink,
+    );
+
+    await tester.pumpWidget(page(AppTheme.dark));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<ColoredBox>(find.byKey(const ValueKey('discover-background')))
+          .color,
+      const Color(0xFF0D1728),
+    );
+    expect(
+      tester.widget<Text>(find.text('Sách nổi bật')).style?.color,
+      Colors.white,
+    );
+  });
+
   testWidgets('featured pages, view all, and save button work', (tester) async {
     final shelf = BookshelfService(
       userId: 'featured-test',
@@ -181,8 +401,24 @@ void main() {
     );
     addTearDown(shelf.dispose);
     final catalog = [
-      const Book(id: '/works/OL10263W', title: 'The Little Prince'),
-      const Book(id: '/works/OL82563W', title: 'Harry Potter'),
+      const Book(
+        id: '/works/OL10263W',
+        title: 'The Little Prince',
+        selectedEdition: BookEdition(
+          id: '/books/OL1M',
+          workIds: ['/works/OL10263W'],
+          pages: 96,
+        ),
+      ),
+      const Book(
+        id: '/works/OL82563W',
+        title: 'Harry Potter',
+        selectedEdition: BookEdition(
+          id: '/books/OL2M',
+          workIds: ['/works/OL82563W'],
+          pages: 200,
+        ),
+      ),
       const Book(id: '/works/OL468431W', title: 'The Great Gatsby'),
       const Book(id: '/works/OL66554W', title: 'Pride and Prejudice'),
     ];
@@ -208,6 +444,8 @@ void main() {
     await tester.tap(saveButton);
     await tester.pumpAndSettle();
     expect(shelf.bookById(catalog.first.id), isNotNull);
+    tester.widget<PageView>(find.byType(PageView)).controller!.jumpToPage(0);
+    await tester.pumpAndSettle();
     expect(find.byTooltip('Đã lưu vào tủ sách'), findsOneWidget);
 
     final libraryCard = find.ancestor(

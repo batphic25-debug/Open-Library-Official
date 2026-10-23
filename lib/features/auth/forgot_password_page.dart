@@ -1,7 +1,9 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import 'auth_service.dart';
 import 'auth_widgets.dart';
+import 'reset_password_page.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key, required this.authService});
@@ -48,22 +50,32 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) => AuthLayout(
-    title: 'Quên mật khẩu?',
-    subtitle: 'Nhập email của bạn để yêu cầu đặt lại mật khẩu.',
+    title: context.tr("Quên mật khẩu?"),
+    subtitle: context.tr("Nhập email của bạn để yêu cầu đặt lại mật khẩu."),
     showBack: true,
     child: Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const AuthNotice(
-            'Bản mô phỏng • Chưa gửi email thật và chưa thay đổi mật khẩu.',
-          ),
+          if (widget.authService.apiClient == null)
+            AuthNotice(
+              context.tr(
+                'Chưa hỗ trợ gửi email đặt lại mật khẩu. Mật khẩu hiện tại không thay đổi.',
+              ),
+            ),
           if (_error != null) AuthNotice(_error!, error: true),
-          if (_sent)
-            const AuthNotice(
-              'Đã mô phỏng yêu cầu đặt lại mật khẩu. Không có email nào được gửi. '
-              'Bạn vẫn có thể đăng nhập bằng mật khẩu cũ.',
+          if (_sent && widget.authService.apiClient == null)
+            AuthNotice(
+              context.tr(
+                'Chưa thể gửi email đặt lại mật khẩu. Bạn vẫn có thể đăng nhập bằng mật khẩu cũ.',
+              ),
+            ),
+          if (_sent && widget.authService.apiClient != null)
+            AuthNotice(
+              context.tr(
+                'Nếu tài khoản tồn tại, yêu cầu đặt lại mật khẩu đã được ghi nhận.',
+              ),
             ),
           AuthField(
             label: 'Email',
@@ -74,24 +86,39 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               textInputAction: TextInputAction.done,
               autofillHints: const [AutofillHints.email],
               autocorrect: false,
-              validator: AuthService.validateEmail,
+              validator: (value) =>
+                  context.trValidation(AuthService.validateEmail(value)),
               onFieldSubmitted: (_) => _send(),
               onChanged: (_) {
                 if (_sent) setState(() => _sent = false);
               },
               decoration: const InputDecoration(
                 hintText: 'ban@example.com',
-                prefixIcon: Icon(Icons.mail_outline_rounded),
+                prefixIcon: AuthInputIcon(Icons.email_rounded),
               ),
             ),
           ),
           const SizedBox(height: 24),
-          AuthButton(label: 'Gửi yêu cầu', loading: _loading, onPressed: _send),
+          AuthButton(
+            label: context.tr("Gửi yêu cầu"),
+            loading: _loading,
+            onPressed: _send,
+          ),
+          if (widget.authService.apiClient != null)
+            TextButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      ResetPasswordPage(authService: widget.authService),
+                ),
+              ),
+              child: Text(context.tr('Tôi đã có mã đặt lại')),
+            ),
           const SizedBox(height: 20),
           TextButton.icon(
             onPressed: _loading ? null : () => Navigator.of(context).pop(),
             icon: const Icon(Icons.arrow_back_rounded, size: 18),
-            label: const Text('Quay lại đăng nhập'),
+            label: Text(context.tr("Quay lại đăng nhập")),
           ),
         ],
       ),

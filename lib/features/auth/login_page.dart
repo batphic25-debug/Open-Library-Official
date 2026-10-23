@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import 'auth_service.dart';
@@ -64,14 +65,16 @@ class _LoginPageState extends State<LoginPage> {
     _password.clear();
     setState(() {
       _error = null;
-      _notice = 'Đăng ký thành công! Hãy đăng nhập bằng tài khoản vừa tạo.';
+      _notice = context.tr(
+        "Đăng ký thành công! Hãy đăng nhập bằng tài khoản vừa tạo.",
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) => AuthLayout(
-    title: 'Đăng nhập',
-    subtitle: 'Chào mừng trở lại với tủ sách của bạn.',
+    title: context.tr("Đăng nhập"),
+    subtitle: context.tr("Chào mừng trở lại với tủ sách của bạn."),
     hero: true,
     child: AutofillGroup(
       child: Form(
@@ -81,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             if (_notice != null) AuthNotice(_notice!),
             if (_error != null) AuthNotice(_error!, error: true),
-            AuthField(
+            Semantics(
               label: 'Email',
               child: TextFormField(
                 controller: _email,
@@ -90,23 +93,23 @@ class _LoginPageState extends State<LoginPage> {
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.email],
                 autocorrect: false,
-                validator: AuthService.validateEmail,
-                decoration: const InputDecoration(
-                  hintText: 'demo@example.com',
-                  prefixIcon: Icon(Icons.mail_outline_rounded),
-                ),
+                validator: (value) =>
+                    context.trValidation(AuthService.validateEmail(value)),
+                decoration: const InputDecoration(hintText: 'Email'),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             PasswordField(
               controller: _password,
-              label: 'Mật khẩu',
+              label: context.tr("Mật khẩu"),
+              minimal: true,
               enabled: !_loading,
               validator: (value) => value == null || value.isEmpty
-                  ? 'Vui lòng nhập mật khẩu'
+                  ? context.tr("Vui lòng nhập mật khẩu")
                   : null,
               onSubmitted: (_) => _login(),
             ),
+            const SizedBox(height: 26),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
@@ -119,34 +122,52 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
-                child: const Text('Quên mật khẩu?'),
+                child: Text(context.tr("Quên mật khẩu?")),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             AuthButton(
-              label: 'Đăng nhập',
+              label: context.tr("Đăng nhập"),
               sweepOnPress: true,
               loading: _loading,
               onPressed: _login,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 14),
             Wrap(
               alignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                const Text('Chưa có tài khoản?'),
+                Text(context.tr("Chưa có tài khoản?")),
                 TextButton(
                   onPressed: _loading ? null : _register,
-                  child: const Text('Đăng ký'),
+                  child: Text(context.tr("Đăng ký")),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            const AuthNotice(
-              'Bản mô phỏng • Chưa kết nối máy chủ.\n'
-              'Tài khoản thử: demo@example.com\nMật khẩu: Demo1234\n'
-              'Chỉ dùng thông tin thử, không dùng mật khẩu thật.',
-            ),
+            if (widget.authService.apiClient == null) ...[
+              const SizedBox(height: 10),
+              TextButton.icon(
+                onPressed: _loading
+                    ? null
+                    : () {
+                        _email.text = AuthService.demoEmail;
+                        _password.text = AuthService.demoPassword;
+                      },
+                icon: const Icon(Icons.auto_stories_outlined, size: 18),
+                label: Text(context.tr('Điền tài khoản xem trước')),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                context.tr(
+                  'Tài khoản chỉ dùng trong phiên này. Không nhập mật khẩu thật.',
+                ),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ],
         ),
       ),

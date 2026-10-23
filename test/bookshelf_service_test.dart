@@ -149,6 +149,34 @@ void main() {
     },
   );
   test(
+    'full progress automatically finishes and stays finished after reopen',
+    () async {
+      await shelf.addBook(book);
+      await shelf.updateProgress(book.id, 99);
+      expect(shelf.books.single.status, ReadingStatus.reading);
+      expect(shelf.readingBooks.value, hasLength(1));
+      await shelf.updateProgress(book.id, 100);
+      expect(shelf.books.single.status, ReadingStatus.read);
+      expect(shelf.readingBooks.value, isEmpty);
+      await shelf.close();
+      shelf = open('alice');
+      await shelf.loadBooks();
+      expect(shelf.books.single.status, ReadingStatus.read);
+      expect(shelf.readingBooks.value, isEmpty);
+    },
+  );
+
+  test('previously saved 100 percent reading books load as finished', () async {
+    await shelf.addBook(book);
+    await shelf.updateStatus(book.id, ReadingStatus.read);
+    await shelf.updateStatus(book.id, ReadingStatus.reading);
+    await shelf.close();
+    shelf = open('alice');
+    await shelf.loadBooks();
+    expect(shelf.books.single.status, ReadingStatus.read);
+    expect(shelf.readingBooks.value, isEmpty);
+  });
+  test(
     'unknown or zero total never manufactures percentage; can finish',
     () async {
       await shelf.addBook(unknown);

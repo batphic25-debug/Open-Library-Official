@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -10,7 +11,9 @@ import 'book_reading_page.dart';
 import 'models/book.dart';
 import 'services/open_library_service.dart';
 import 'services/offline_book_library.dart';
+import 'services/book_discussion_service.dart';
 import '../profile/settings_service.dart';
+import 'widgets/book_discussion_section.dart';
 import 'widgets/edition_metadata.dart';
 
 /// Basic handoff destination; editions and full work data belong to person 3.
@@ -24,6 +27,9 @@ class BookDetailPage extends StatefulWidget {
     this.settings,
     this.onStartReading,
     this.onPageChanged,
+    this.userId,
+    this.displayName,
+    this.discussionService,
   });
   final Book book;
   final OpenLibraryService? service;
@@ -34,6 +40,9 @@ class BookDetailPage extends StatefulWidget {
   final SettingsService? settings;
   final Future<void> Function(Book)? onStartReading;
   final Future<void> Function(Book book, int page)? onPageChanged;
+  final String? userId;
+  final String? displayName;
+  final BookDiscussionService? discussionService;
   @override
   State<BookDetailPage> createState() => _BookDetailPageState();
 }
@@ -87,7 +96,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
   void _message(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+          .showSnackBar(SnackBar(content: Text(context.trError(message))));
     }
   }
 
@@ -97,9 +106,9 @@ class _BookDetailPageState extends State<BookDetailPage> {
     try {
       final added = await widget.onAddToShelf!(_book!);
       if (mounted) setState(() => _saved = true);
-      _message(added ? 'Đã thêm sách vào tủ.' : 'Sách đã có trong tủ.');
+      _message(added ? "Đã thêm sách vào tủ." : "Sách đã có trong tủ.");
     } catch (_) {
-      _message('Không thể thêm sách. Vui lòng thử lại.');
+      _message("Không thể thêm sách. Vui lòng thử lại.");
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -111,9 +120,9 @@ class _BookDetailPageState extends State<BookDetailPage> {
       final opened = widget.openLink != null
           ? await widget.openLink!(url)
           : await launchUrl(url);
-      if (!opened) _message('Không thể mở Open Library. Vui lòng thử lại.');
+      if (!opened) _message("Không thể mở Open Library. Vui lòng thử lại.");
     } catch (_) {
-      _message('Không thể mở Open Library. Vui lòng thử lại.');
+      _message("Không thể mở Open Library. Vui lòng thử lại.");
     }
   }
 
@@ -122,7 +131,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       try {
         await widget.onStartReading!(book);
       } catch (_) {
-        _message('Chưa lưu được sách vào tủ. Bạn vẫn có thể đọc tiếp.');
+        _message("Chưa lưu được sách vào tủ. Bạn vẫn có thể đọc tiếp.");
       }
     }
     if (!mounted) return;
@@ -161,8 +170,8 @@ class _BookDetailPageState extends State<BookDetailPage> {
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: Theme.of(context).colorScheme.surface,
     appBar: AppBar(
-      title: const Text(
-        'Chi tiết sách',
+      title: Text(
+        context.tr("Chi tiết sách"),
         style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800),
       ),
       centerTitle: true,
@@ -170,7 +179,9 @@ class _BookDetailPageState extends State<BookDetailPage> {
       surfaceTintColor: Colors.transparent,
       actions: [
         IconButton(
-          tooltip: _saved ? 'Đã có trong tủ sách' : 'Lưu vào tủ sách',
+          tooltip: _saved
+              ? context.tr("Đã có trong tủ sách")
+              : context.tr("Lưu vào tủ sách"),
           onPressed:
               _book == null ||
                   _loading ||
@@ -198,19 +209,18 @@ class _BookDetailPageState extends State<BookDetailPage> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          decoration: BoxDecoration(
-            gradient: const RadialGradient(
-              colors: [Color(0xFFFFDCCF), Colors.white],
-              radius: .75,
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Center(child: BookCover(book: book, width: 164, height: 238)),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth.clamp(0.0, 280.0);
+            return Center(
+              child: BookCover(
+                book: book,
+                width: width,
+                height: width * 238 / 164,
+              ),
+            );
+          },
         ),
-        if (book.coverIsIllustration)
-          const Text('Bìa minh họa của nhóm', textAlign: TextAlign.center),
         const SizedBox(height: 20),
         Text(
           book.title,
@@ -224,33 +234,40 @@ class _BookDetailPageState extends State<BookDetailPage> {
         ),
         const SizedBox(height: 8),
         Text(
-          book.authors.isEmpty ? 'Chưa có dữ liệu' : book.authorLabel,
+          book.authors.isEmpty
+              ? context.tr("Chưa có dữ liệu")
+              : context.tr(book.authorLabel),
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 17, color: AppTheme.muted),
+          style: TextStyle(
+            fontSize: 17,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            Icon(
               Icons.menu_book_outlined,
               size: 18,
-              color: AppTheme.muted,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: 6),
             Flexible(
               child: Text(
                 book.selectedEdition?.pages == null
-                    ? 'Chưa có số trang'
-                    : '${book.selectedEdition!.pages} trang',
-                style: const TextStyle(color: AppTheme.muted),
+                    ? context.tr("Chưa có số trang")
+                    : context.tr("{0} trang", [book.selectedEdition!.pages]),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ],
         ),
         const SizedBox(height: 12),
         if (book.categories.isEmpty)
-          const Text('Thể loại: Chưa có dữ liệu')
+          Text(context.tr("Thể loại: Chưa có dữ liệu"))
         else
           Wrap(
             alignment: WrapAlignment.center,
@@ -260,7 +277,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
               for (final category in book.categories.take(3))
                 Chip(
                   label: Text(
-                    category,
+                    context.tr(category),
                     style: const TextStyle(
                       color: Color(0xFFFF554C),
                       fontSize: 12,
@@ -288,18 +305,20 @@ class _BookDetailPageState extends State<BookDetailPage> {
                   children: [
                     const Icon(Icons.language, size: 21),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Ngôn ngữ ấn bản',
-                        style: TextStyle(color: Color(0xFF65728A)),
+                        context.tr("Ngôn ngữ ấn bản"),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         book.selectedEdition?.languageLabel.isNotEmpty == true
-                            ? book.selectedEdition!.languageLabel
-                            : 'Chưa có dữ liệu',
+                            ? book.selectedEdition!.languageLabelFor(context.tr)
+                            : context.tr("Chưa có dữ liệu"),
                         textAlign: TextAlign.end,
                       ),
                     ),
@@ -309,24 +328,26 @@ class _BookDetailPageState extends State<BookDetailPage> {
               const Divider(height: 1, color: Color(0xFFE5E6EC)),
               InkWell(
                 onTap: _saving ? null : _chooseEdition,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   child: Row(
                     children: [
-                      Icon(Icons.menu_book_outlined, size: 21),
-                      SizedBox(width: 12),
+                      const Icon(Icons.menu_book_outlined, size: 21),
+                      const SizedBox(width: 12),
                       Text(
-                        'Ấn bản',
-                        style: TextStyle(color: Color(0xFF65728A)),
+                        context.tr("Ấn bản"),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Xem các phiên bản',
+                          context.tr("Xem các phiên bản"),
                           textAlign: TextAlign.end,
                         ),
                       ),
-                      Icon(Icons.chevron_right, size: 20),
+                      const Icon(Icons.chevron_right, size: 20),
                     ],
                   ),
                 ),
@@ -335,27 +356,33 @@ class _BookDetailPageState extends State<BookDetailPage> {
           ),
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Giới thiệu',
+        Text(
+          context.tr("Giới thiệu"),
           style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 8),
         SelectableText(
-          book.description ?? 'Chưa có dữ liệu',
+          context.tr(book.description ?? "Chưa có dữ liệu"),
           style: const TextStyle(fontSize: 15, height: 1.55),
         ),
         if (book.description != null)
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              'Nguồn giới thiệu: ${book.descriptionSource ?? 'Chưa có dữ liệu'}',
-              style: const TextStyle(fontSize: 12, color: Color(0xFF65728A)),
+              context.tr("Nguồn giới thiệu: {0}", [
+                context.tr(book.descriptionSource ?? "Chưa có dữ liệu"),
+              ]),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         const SizedBox(height: 16),
         FilledButton.icon(
           style: FilledButton.styleFrom(
-            backgroundColor: AppTheme.accent,
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
             minimumSize: const Size.fromHeight(48),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
@@ -363,7 +390,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
           ),
           onPressed: () => _read(book),
           icon: const Icon(Icons.auto_stories_outlined),
-          label: const Text('Đọc sách'),
+          label: Text(context.tr("Đọc sách")),
         ),
         const SizedBox(height: 8),
         DecoratedBox(
@@ -390,17 +417,23 @@ class _BookDetailPageState extends State<BookDetailPage> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.bookmark_add_outlined),
-            label: Text(_saving ? 'Đang thêm…' : 'Thêm vào tủ sách'),
+            label: Text(
+              _saving
+                  ? context.tr("Đang thêm…")
+                  : context.tr("Thêm vào tủ sách"),
+            ),
           ),
         ),
         // shortcut: saving is injected by person 4; enable when its persistent bookshelf service is available.
         if (widget.onAddToShelf == null)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Text(
-              'Tính năng lưu sách chưa khả dụng.',
+              context.tr("Tính năng lưu sách chưa khả dụng."),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF65728A)),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         const SizedBox(height: 8),
@@ -415,20 +448,24 @@ class _BookDetailPageState extends State<BookDetailPage> {
           ),
           onPressed: _openSource,
           icon: const Icon(Icons.open_in_new),
-          label: const Text('Mở trên Open Library'),
+          label: Text(context.tr("Mở trên Open Library")),
         ),
         const SizedBox(height: 20),
-        const Text(
-          'Thông tin xuất bản',
+        Text(
+          context.tr("Thông tin xuất bản"),
           style: TextStyle(fontSize: 21, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 8),
-        Text('Xuất bản lần đầu: ${book.firstPublishYear ?? 'Chưa có dữ liệu'}'),
+        Text(
+          context.tr("Xuất bản lần đầu: {0}", [
+            book.firstPublishYear ?? context.tr("Chưa có dữ liệu"),
+          ]),
+        ),
         EditionMetadata(edition: book.selectedEdition),
         if (book.authorIds.isNotEmpty)
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: const Text('Thông tin tác giả'),
+            title: Text(context.tr("Thông tin tác giả")),
             onExpansionChanged: (open) {
               if (open && _authors == null) _loadAuthors();
             },
@@ -442,7 +479,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                     }
                     if (snapshot.hasError) {
                       return ErrorView(
-                        message: 'Không thể tải thông tin tác giả.',
+                        message: context.tr("Không thể tải thông tin tác giả."),
                         onRetry: _loadAuthors,
                       );
                     }
@@ -456,17 +493,28 @@ class _BookDetailPageState extends State<BookDetailPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  author.name ?? 'Chưa có dữ liệu',
+                                  author.name ?? context.tr("Chưa có dữ liệu"),
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
                                 if (author.birthDate != null)
-                                  Text('Ngày sinh: ${author.birthDate}'),
+                                  Text(
+                                    context.tr("Ngày sinh: {0}", [
+                                      author.birthDate,
+                                    ]),
+                                  ),
                                 if (author.deathDate != null)
-                                  Text('Ngày mất: ${author.deathDate}'),
+                                  Text(
+                                    context.tr("Ngày mất: {0}", [
+                                      author.deathDate,
+                                    ]),
+                                  ),
                                 const SizedBox(height: 6),
-                                Text(author.biography ?? 'Chưa có dữ liệu'),
+                                Text(
+                                  author.biography ??
+                                      context.tr("Chưa có dữ liệu"),
+                                ),
                               ],
                             ),
                           ),
@@ -476,6 +524,16 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 ),
             ],
           ),
+        if (widget.userId != null && widget.displayName != null) ...[
+          const SizedBox(height: 28),
+          BookDiscussionSection(
+            bookId: book.id,
+            bookTitle: book.title,
+            userId: widget.userId!,
+            displayName: widget.displayName!,
+            service: widget.discussionService,
+          ),
+        ],
       ],
     ),
   );

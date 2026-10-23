@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import '../../core/widgets/loading_view.dart';
 import '../../core/theme/app_theme.dart';
 import '../books/models/book.dart';
 import '../books/services/sample_books.dart';
+import '../books/services/book_ranking_service.dart';
 import '../bookshelf/bookshelf_service.dart';
 import 'widgets/category_selector.dart';
 import 'widgets/reading_card.dart';
@@ -26,6 +28,7 @@ class DiscoverPage extends StatefulWidget {
     this.bookshelfService,
     this.loadBooks = SampleBooks.load,
     this.searchQuery = '',
+    this.rankingService,
   });
   final String displayName;
   final Uint8List? avatarBytes;
@@ -37,6 +40,7 @@ class DiscoverPage extends StatefulWidget {
   final ValueListenable<List<ReadingBook>>? readingBooks;
   final BookshelfService? bookshelfService;
   final Future<List<Book>> Function() loadBooks;
+  final BookRankingService? rankingService;
 
   @override
   State<DiscoverPage> createState() => _DiscoverPageState();
@@ -44,20 +48,34 @@ class DiscoverPage extends StatefulWidget {
 
 class _DiscoverPageState extends State<DiscoverPage> {
   static const _coral = AppTheme.accent;
-  static const _heading = TextStyle(
+  static const _night = Color(0xFF0D1728);
+  static const _panel = Color(0xFF18263B);
+  static const _line = Color(0xFF2A3C57);
+  static const _secondary = Color(0xFF9BAAC1);
+  static const _gold = Color(0xFFFFC45A);
+  bool get _dark => Theme.of(context).brightness == Brightness.dark;
+  Color get _canvas => _dark ? _night : AppTheme.canvas;
+  Color get _surface => _dark ? _panel : Colors.white;
+  Color get _border => _dark ? _line : AppTheme.border;
+  Color get _text => _dark ? Colors.white : AppTheme.ink;
+  Color get _muted => _dark ? _secondary : AppTheme.muted;
+  Color get _highlight => _dark ? _gold : _coral;
+  TextStyle get _heading => TextStyle(
     fontSize: 21,
     fontWeight: FontWeight.w800,
     letterSpacing: -0.3,
+    color: _text,
   );
   late Future<List<Book>> _books = widget.loadBooks();
   final PageController _featuredController = PageController(
-    viewportFraction: .92,
+    viewportFraction: 1,
   );
   final GlobalKey _libraryKey = GlobalKey();
   final Set<String> _savingFeatured = {};
   String? _category;
   bool _showAll = false;
   int _featuredIndex = 0;
+  int? _rankingDays = 1;
 
   @override
   void dispose() {
@@ -89,7 +107,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              added ? 'Đã lưu sách vào tủ.' : 'Sách đã có trong tủ.',
+              added
+                  ? context.tr("Đã lưu sách vào tủ.")
+                  : context.tr("Sách đã có trong tủ."),
             ),
           ),
         );
@@ -97,8 +117,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Chưa lưu được sách. Vui lòng thử lại.'),
+          SnackBar(
+            content: Text(context.tr("Chưa lưu được sách. Vui lòng thử lại.")),
           ),
         );
       }
@@ -111,11 +131,14 @@ class _DiscoverPageState extends State<DiscoverPage> {
       ? Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: _surface,
             borderRadius: BorderRadius.circular(18),
           ),
-          child: const Text(
-            'Chưa có sách đang đọc. Thêm sách vào tủ để bắt đầu hành trình đọc của bạn.',
+          child: Text(
+            context.tr(
+              "Chưa có sách đang đọc. Thêm sách vào tủ để bắt đầu hành trình đọc của bạn.",
+            ),
+            style: TextStyle(color: _muted),
           ),
         )
       : Column(
@@ -134,223 +157,129 @@ class _DiscoverPageState extends State<DiscoverPage> {
           ],
         );
 
-  Widget _featuredBook(Book book) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final description = book.description?.trim();
-    final ink = Theme.of(context).colorScheme.onSurface;
-    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final largeText = MediaQuery.textScalerOf(context).scale(1) > 1.3;
-        final wide = constraints.maxWidth >= 620 && !largeText;
-        final compact = !wide;
-        final coverHeight = wide
-            ? constraints.maxHeight - 48
-            : constraints.maxWidth < 300
-            ? 166.0
-            : 200.0;
-        final coverWidth = wide
-            ? coverHeight * 2 / 3
-            : constraints.maxWidth < 300
-            ? 108.0
-            : 126.0;
-        return Material(
-          key: ValueKey('featured-${book.id}'),
-          color: Colors.transparent,
-          elevation: dark ? 0 : 3,
-          shadowColor: const Color(0x1F765746),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(26),
-            side: BorderSide(
-              color: dark ? Colors.white12 : const Color(0xFFF5EEEA),
+  Widget _featuredBook(Book book) => LayoutBuilder(
+    builder: (context, constraints) {
+      final wide = constraints.maxWidth >= 620;
+      final stacked =
+          constraints.maxWidth < 340 ||
+          MediaQuery.textScalerOf(context).scale(1) > 1.3;
+      final padding = wide ? 28.0 : 16.0;
+      final coverWidth = stacked
+          ? 100.0
+          : (constraints.maxWidth - padding * 2) * .35;
+      final coverHeight = coverWidth * 1.52;
+      final description = book.description?.trim();
+      final title = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            book.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: _text,
+              fontSize: wide ? 28 : 18,
+              fontWeight: FontWeight.w800,
+              height: 1.15,
             ),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: Ink(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: dark
-                    ? [const Color(0xFF38313A), const Color(0xFF242632)]
-                    : [const Color(0xFFFFEEE6), const Color(0xFFFFFCF9)],
+          const SizedBox(height: 6),
+          Text(
+            context.tr(book.authorLabel),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: _muted, fontSize: wide ? 21 : 13),
+          ),
+        ],
+      );
+      final details = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!stacked) title,
+          SizedBox(height: wide ? 22 : 12),
+          _featuredMetadata(book, _muted),
+          if (description != null && description.isNotEmpty) ...[
+            SizedBox(height: wide ? 16 : 10),
+            Expanded(
+              child: Text(
+                context.tr(description),
+                maxLines: wide ? 4 : 3,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: _muted,
+                  fontSize: wide ? 18 : 13,
+                  height: 1.45,
+                ),
               ),
             ),
-            child: InkWell(
-              onTap: () => widget.onBookTap(book),
-              child: Padding(
-                padding: EdgeInsets.all(wide ? 24 : 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+          ] else
+            const Spacer(),
+          const SizedBox(height: 12),
+          _featuredActions(book, wide),
+        ],
+      );
+      return Material(
+        key: ValueKey('featured-${book.id}'),
+        color: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(
+            color: _dark ? const Color(0xFF263F58) : const Color(0xFFE8DCC4),
+            width: 1.5,
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: _dark
+                  ? const [Color(0xFF152A40), Color(0xFF17283D)]
+                  : const [Color(0xFFFFF7E7), Color(0xFFFFFCF5)],
+            ),
+          ),
+          child: InkWell(
+            onTap: () => widget.onBookTap(book),
+            child: Padding(
+              padding: EdgeInsets.all(padding),
+              child: stacked
+                  ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            BookCover(
+                              book: book,
+                              width: coverWidth,
+                              height: coverHeight,
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(child: title),
+                          ],
+                        ),
+                        Expanded(child: details),
+                      ],
+                    )
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         BookCover(
                           book: book,
                           width: coverWidth,
                           height: coverHeight,
                         ),
-                        SizedBox(width: wide ? 26 : 12),
-                        Expanded(
-                          child: SizedBox(
-                            height: wide
-                                ? coverHeight
-                                : compact
-                                ? 176
-                                : 220,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  alignment: Alignment.centerLeft,
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: wide ? 14 : 8,
-                                      vertical: wide ? 8 : 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      gradient: wide
-                                          ? const LinearGradient(
-                                              colors: [
-                                                Color(0xFFFF8463),
-                                                Color(0xFFFF4F59),
-                                              ],
-                                            )
-                                          : null,
-                                      color: wide
-                                          ? null
-                                          : dark
-                                          ? const Color(0xFF493138)
-                                          : const Color(0xFFFFEAE4),
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          wide
-                                              ? Icons.workspace_premium_rounded
-                                              : Icons.star_rounded,
-                                          size: wide ? 19 : 16,
-                                          color: wide ? Colors.white : _coral,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          'NỔI BẬT',
-                                          style: TextStyle(
-                                            color: wide ? Colors.white : _coral,
-                                            fontSize: wide ? 13 : 10,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: wide ? 18 : 9),
-                                Text(
-                                  book.title,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: ink,
-                                    fontSize: wide ? 32 : 20,
-                                    fontWeight: FontWeight.w800,
-                                    height: 1.12,
-                                  ),
-                                ),
-                                SizedBox(height: wide ? 12 : 6),
-                                Text(
-                                  book.authorLabel,
-                                  maxLines: compact || wide ? 2 : 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: muted,
-                                    fontSize: wide ? 18 : 13,
-                                  ),
-                                ),
-                                if (wide) ...[
-                                  const SizedBox(height: 22),
-                                  _featuredMetadata(book, muted),
-                                ],
-                                if (!compact &&
-                                    description != null &&
-                                    description.isNotEmpty) ...[
-                                  SizedBox(height: wide ? 24 : 12),
-                                  if (!wide) ...[
-                                    Container(
-                                      width: 32,
-                                      height: 3,
-                                      decoration: BoxDecoration(
-                                        color: _coral,
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                  ],
-                                  Expanded(
-                                    child: Text(
-                                      description,
-                                      maxLines: 4,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: muted,
-                                        fontSize: wide ? 16 : 13,
-                                        height: 1.4,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                                if (wide &&
-                                    (description == null ||
-                                        description.isEmpty))
-                                  const Spacer(),
-                                if (wide) ...[
-                                  const SizedBox(height: 10),
-                                  _featuredActions(book, wide),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ),
+                        SizedBox(width: wide ? 26 : 16),
+                        Expanded(child: details),
                       ],
                     ),
-                    if (compact &&
-                        (book.categories.isNotEmpty ||
-                            book.selectedEdition?.pages != null)) ...[
-                      const SizedBox(height: 12),
-                      _featuredMetadata(book, muted),
-                    ],
-                    if (compact &&
-                        description != null &&
-                        description.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      Text(
-                        description,
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: muted,
-                          fontSize: 13,
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
-                    if (!wide) ...[
-                      const Spacer(),
-                      _featuredActions(book, wide),
-                    ],
-                  ],
-                ),
-              ),
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
 
   Widget _featuredActions(Book book, bool wide) => Row(
     children: [
@@ -360,71 +289,65 @@ class _DiscoverPageState extends State<DiscoverPage> {
     ],
   );
 
-  Widget _featuredMetadata(Book book, Color color) => Wrap(
-    spacing: 16,
-    runSpacing: 8,
-    children: [
-      if (book.categories.isNotEmpty)
-        _featuredFact(Icons.menu_book_outlined, book.categories.first, color),
-      if (book.selectedEdition?.pages != null)
-        _featuredFact(
-          Icons.description_outlined,
-          '${book.selectedEdition!.pages} trang',
-          color,
+  Widget _featuredMetadata(Book book, Color color) {
+    final labels = [
+      if (book.categories.isNotEmpty) context.tr(book.categories.first),
+      if ((book.selectedEdition?.pages ?? 0) > 0)
+        context.tr("{0} trang", [book.selectedEdition!.pages]),
+    ];
+    if (labels.isEmpty) return const SizedBox.shrink();
+    return Row(
+      children: [
+        Icon(Icons.menu_book_outlined, color: color, size: 20),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            labels.join(' · '),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: color, fontSize: 14),
+          ),
         ),
-    ],
-  );
-
-  Widget _featuredFact(IconData icon, String label, Color color) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(icon, color: color, size: 20),
-      const SizedBox(width: 6),
-      Flexible(
-        child: Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: color, fontSize: 15),
-        ),
-      ),
-    ],
-  );
+      ],
+    );
+  }
 
   Widget _featuredDetailButton(Book book, bool wide) => Material(
     color: Colors.transparent,
-    borderRadius: BorderRadius.circular(18),
+    borderRadius: BorderRadius.circular(_dark ? 18 : 999),
     clipBehavior: Clip.antiAlias,
     child: Ink(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFFF4F55), Color(0xFFFF8760)],
+        gradient: LinearGradient(
+          colors: _dark
+              ? const [Color(0xFFFFCA55), Color(0xFFFFC247)]
+              : const [Color(0xFFFF6B55), Color(0xFFFF6550)],
         ),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(_dark ? 18 : 999),
       ),
       child: InkWell(
         onTap: () => widget.onBookTap(book),
         child: SizedBox(
-          height: wide ? 62 : 52,
+          height: wide ? 62 : 48,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Flexible(
                 child: Text(
-                  'Xem chi tiết',
+                  context.tr("Xem chi tiết"),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: _dark ? _night : Colors.white,
                     fontSize: wide ? 19 : 15,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
               const SizedBox(width: 10),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_rounded,
-                color: Colors.white,
+                color: _dark ? _night : Colors.white,
                 size: 22,
               ),
             ],
@@ -439,24 +362,25 @@ class _DiscoverPageState extends State<DiscoverPage> {
     Widget button() {
       final saved = shelf?.bookById(book.id) != null;
       return SizedBox(
-        width: wide ? 62 : 52,
-        height: wide ? 62 : 52,
+        width: wide ? 70 : 48,
+        height: wide ? 62 : 48,
         child: IconButton(
-          tooltip: saved ? 'Đã lưu vào tủ sách' : 'Lưu vào tủ sách',
+          tooltip: saved
+              ? context.tr("Đã lưu vào tủ sách")
+              : context.tr("Lưu vào tủ sách"),
           onPressed: shelf == null || saved || _savingFeatured.contains(book.id)
               ? null
               : () => _saveFeatured(book),
           style: IconButton.styleFrom(
-            backgroundColor: wide ? Colors.white : const Color(0xFFFFEEE9),
-            disabledBackgroundColor: wide
-                ? Colors.white
-                : const Color(0xFFFFEEE9),
+            backgroundColor: Colors.transparent,
+            disabledBackgroundColor: Colors.transparent,
             shape: const CircleBorder(),
+            side: BorderSide(color: _dark ? _gold : AppTheme.accent, width: 2),
           ),
           icon: Icon(
-            saved ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-            color: _coral,
-            size: 25,
+            saved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+            color: _dark ? (saved ? _gold : _text) : AppTheme.accent,
+            size: wide ? 30 : 24,
           ),
         ),
       );
@@ -491,7 +415,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       width: 192,
                       height: 64,
                       fit: BoxFit.contain,
-                      color: _coral,
+                      color: _highlight,
                       excludeFromSemantics: true,
                     ),
                   ),
@@ -504,17 +428,19 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: _text,
                   ),
                 ),
               ),
               const SizedBox(width: 8),
               IconButton(
                 onPressed: widget.onProfileTap,
-                tooltip: 'Mở trang Cá nhân của ${widget.displayName}',
+                tooltip: context.tr("Mở trang Cá nhân của {0}", [
+                  widget.displayName,
+                ]),
                 style: IconButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFF0E9),
-                  foregroundColor: _coral,
+                  backgroundColor: _dark ? _panel : const Color(0xFFFFF0E9),
+                  foregroundColor: _highlight,
                 ),
                 icon: widget.avatarBytes == null
                     ? Text(
@@ -525,9 +451,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                   .characters
                                   .first
                                   .toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
-                          color: _coral,
+                          color: _highlight,
                           fontWeight: FontWeight.w700,
                         ),
                       )
@@ -540,19 +466,19 @@ class _DiscoverPageState extends State<DiscoverPage> {
           ),
           const SizedBox(height: 12),
           Text.rich(
-            const TextSpan(
+            TextSpan(
               children: [
-                TextSpan(text: 'Hôm nay bạn\n'),
+                TextSpan(text: context.tr("Hôm nay bạn\n")),
                 TextSpan(
-                  text: 'muốn đọc gì?',
-                  style: TextStyle(color: _coral),
+                  text: context.tr("muốn đọc gì?"),
+                  style: TextStyle(color: _highlight),
                 ),
               ],
             ),
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.w800,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: _text,
               height: 1.12,
               letterSpacing: -.8,
             ),
@@ -563,13 +489,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
             onTap: () => widget.onSearch(widget.searchQuery),
             decoration: InputDecoration(
               filled: true,
-              fillColor: Theme.of(context).brightness == Brightness.dark
-                  ? const Color(0xFF343544)
-                  : AppTheme.softSurface,
+              fillColor: _dark ? _panel : AppTheme.softSurface,
               hintText: widget.searchQuery.isEmpty
-                  ? 'Tìm tên sách, tác giả...'
+                  ? context.tr("Tìm tên sách, tác giả...")
                   : widget.searchQuery,
-              hintStyle: const TextStyle(color: Color(0xFF85858D)),
+              hintStyle: TextStyle(color: _muted),
               prefixIcon: const Padding(
                 padding: EdgeInsets.only(left: 12, right: 8),
                 child: Icon(Icons.search, size: 27),
@@ -585,7 +509,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: _coral, width: 1),
+                borderSide: BorderSide(color: _highlight, width: 1),
               ),
             ),
           ),
@@ -594,10 +518,314 @@ class _DiscoverPageState extends State<DiscoverPage> {
     ),
   );
 
+  Widget _sectionHeading(String title, String subtitle, Color accent) =>
+      Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Row(
+          children: [
+            Container(
+              width: 4,
+              height: 44,
+              decoration: BoxDecoration(
+                color: accent,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: _heading),
+                  const SizedBox(height: 3),
+                  Text(subtitle, style: TextStyle(color: _muted, fontSize: 13)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+
+  Widget _bookStrip(List<Book> books) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _sectionHeading(
+        context.tr("Sách chọn lọc"),
+        context.tr("Khám phá thêm từ thư viện"),
+        _highlight,
+      ),
+      SizedBox(
+        height: 252,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: books.length,
+          separatorBuilder: (_, _) => const SizedBox(width: 12),
+          itemBuilder: (context, index) {
+            final book = books[index];
+            return SizedBox(
+              width: 136,
+              child: Material(
+                key: ValueKey('discover-strip-${book.id}'),
+                color: _surface,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: _border),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () => widget.onBookTap(book),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BookCover(book: book, width: 136, height: 185),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(9, 8, 9, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              book.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: _text,
+                              ),
+                            ),
+                            Text(
+                              context.tr(book.authorLabel),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: _muted, fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ],
+  );
+
+  Widget _rankedBooks(List<Book> books) {
+    final service = widget.rankingService;
+    final views = {
+      for (final book in books)
+        book.id: service?.viewsFor(book.id, days: _rankingDays) ?? 0,
+    };
+    final ordered = books.indexed.toList()
+      ..sort((a, b) {
+        final byViews = views[b.$2.id]!.compareTo(views[a.$2.id]!);
+        return byViews == 0 ? a.$1.compareTo(b.$1) : byViews;
+      });
+    final ranked = ordered.map((entry) => entry.$2).take(5).toList();
+    const medals = [Color(0xFFFF5C62), Color(0xFFF3C400), Color(0xFF2BCB70)];
+    const blue = Color(0xFF468DFF);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _sectionHeading(
+          context.tr("Top sách"),
+          context.tr("Theo lượt xem trên thiết bị này"),
+          blue,
+        ),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: _surface,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: _border),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  for (final period in [
+                    (1, context.tr("Ngày")),
+                    (7, context.tr("Tuần")),
+                    (null, context.tr("Tất cả")),
+                  ])
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        child: Semantics(
+                          selected: _rankingDays == period.$1,
+                          child: OutlinedButton(
+                            onPressed: () =>
+                                setState(() => _rankingDays = period.$1),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 10,
+                              ),
+                              backgroundColor: _rankingDays == period.$1
+                                  ? blue.withValues(alpha: .18)
+                                  : Colors.transparent,
+                              foregroundColor: _rankingDays == period.$1
+                                  ? (_dark
+                                        ? const Color(0xFFB8D3FF)
+                                        : const Color(0xFF245BB5))
+                                  : _muted,
+                              side: BorderSide(
+                                color: _rankingDays == period.$1
+                                    ? blue
+                                    : _border,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: Text(period.$2, textAlign: TextAlign.center),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              if (service?.error != null)
+                TextButton.icon(
+                  onPressed: service!.load,
+                  icon: const Icon(Icons.refresh),
+                  label: Text(context.trError(service.error!)),
+                )
+              else if (views.values.every((count) => count == 0))
+                Padding(
+                  padding: const EdgeInsets.only(top: 14),
+                  child: Text(
+                    context.tr(
+                      "Chưa có lượt xem trong khoảng này. Khám phá một cuốn sách bên dưới.",
+                    ),
+                    style: TextStyle(color: _muted, fontSize: 12),
+                  ),
+                ),
+              for (var index = 0; index < ranked.length; index++) ...[
+                const SizedBox(height: 12),
+                Material(
+                  key: ValueKey('discover-rank-${ranked[index].id}'),
+                  color: index.isOdd
+                      ? (_dark
+                            ? const Color(0xFF1D2C42)
+                            : const Color(0xFFF3F6FB))
+                      : _surface,
+                  borderRadius: BorderRadius.circular(12),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: () => widget.onBookTap(ranked[index]),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          left: BorderSide(
+                            width: 3,
+                            color: index < 3 && views[ranked[index].id]! > 0
+                                ? medals[index]
+                                : _border,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 34,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: index < 3 && views[ranked[index].id]! > 0
+                                  ? medals[index]
+                                  : _border,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                views[ranked[index].id]! > 0
+                                    ? '${index + 1}'.padLeft(2, '0')
+                                    : '—',
+                                style: TextStyle(
+                                  color:
+                                      index < 3 && views[ranked[index].id]! > 0
+                                      ? const Color(0xFF111A32)
+                                      : _muted,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          BookCover(book: ranked[index], width: 50, height: 72),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  ranked[index].title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: _text,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  context.tr(ranked[index].authorLabel),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: _muted, fontSize: 12),
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.visibility_outlined,
+                                      size: 14,
+                                      color: _muted,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Flexible(
+                                      child: Text(
+                                        context.tr("{0} lượt xem", [
+                                          views[ranked[index].id],
+                                        ]),
+                                        style: TextStyle(
+                                          color: _muted,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _catalog(AsyncSnapshot<List<Book>> snapshot) {
     final books = snapshot.data ?? [];
     final categories = {
-      for (final name in ['Văn học', 'Kỳ ảo', 'Trinh thám'])
+      for (final name in ["Văn học", "Kỳ ảo", "Trinh thám"])
         if (books.any((book) => book.categories.contains(name))) name,
       ...books.expand((book) => book.categories),
     }.toList();
@@ -624,10 +852,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 120),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
-      ),
+      decoration: BoxDecoration(color: _canvas),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -649,19 +874,23 @@ class _DiscoverPageState extends State<DiscoverPage> {
           if (highlights.isNotEmpty) ...[
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Row(
                     children: [
                       Flexible(
                         child: Text(
-                          'Sách nổi bật',
+                          context.tr("Sách nổi bật"),
                           style: _heading,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      SizedBox(width: 5),
-                      Icon(Icons.auto_awesome_rounded, color: _coral, size: 20),
+                      const SizedBox(width: 5),
+                      Icon(
+                        Icons.auto_awesome_rounded,
+                        color: _highlight,
+                        size: 20,
+                      ),
                     ],
                   ),
                 ),
@@ -671,8 +900,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     foregroundColor: Theme.of(context)
                         .colorScheme
                         .onSurfaceVariant,
+                    textStyle: const TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                  label: const Text('Xem tất cả'),
+                  label: Text(context.tr("Xem tất cả")),
                   icon: const Icon(Icons.chevron_right),
                   iconAlignment: IconAlignment.end,
                 ),
@@ -681,14 +915,17 @@ class _DiscoverPageState extends State<DiscoverPage> {
             const SizedBox(height: 14),
             LayoutBuilder(
               builder: (context, constraints) {
-                final cardWidth = constraints.maxWidth * .92 - 12;
+                final cardWidth = constraints.maxWidth;
                 final largeText =
                     MediaQuery.textScalerOf(context).scale(1) > 1.3;
-                final height = cardWidth >= 620 && !largeText
-                    ? (cardWidth * .62).clamp(400.0, 520.0)
-                    : largeText
-                    ? 470.0
-                    : 440.0;
+                final height = largeText || cardWidth < 340
+                    ? 440.0 *
+                          MediaQuery.textScalerOf(context)
+                              .scale(1)
+                              .clamp(1.0, 1.5)
+                    : cardWidth >= 620
+                    ? ((cardWidth - 56) * .35 * 1.52 + 56).clamp(400.0, 520.0)
+                    : 250.0;
                 return SizedBox(
                   height: height,
                   child: PageView.builder(
@@ -697,7 +934,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     onPageChanged: (index) =>
                         setState(() => _featuredIndex = index),
                     itemBuilder: (context, index) => Padding(
-                      padding: const EdgeInsets.only(right: 12, bottom: 4),
+                      padding: const EdgeInsets.only(bottom: 4),
                       child: _featuredBook(highlights[index]),
                     ),
                   ),
@@ -720,8 +957,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: index == _featuredIndex
-                              ? _coral
-                              : const Color(0xFFD9DADD),
+                              ? _highlight
+                              : (_dark ? _line : const Color(0xFFD9DADD)),
                         ),
                       ),
                     ),
@@ -730,7 +967,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
             ],
             const SizedBox(height: 26),
           ],
-          const Text('Đang đọc', style: _heading),
+          if (featured.length > 1) ...[
+            _bookStrip(featured.skip(1).take(8).toList()),
+            const SizedBox(height: 28),
+          ],
+          Text(context.tr("Đang đọc"), style: _heading),
           const SizedBox(height: 12),
           if (widget.readingBooks == null)
             _reading(const [])
@@ -739,18 +980,34 @@ class _DiscoverPageState extends State<DiscoverPage> {
               valueListenable: widget.readingBooks!,
               builder: (_, books, child) => _reading(books),
             ),
-          const SizedBox(height: 16),
+          if (filtered.isNotEmpty) ...[
+            const SizedBox(height: 30),
+            if (widget.rankingService == null)
+              _rankedBooks(featured)
+            else
+              ListenableBuilder(
+                listenable: widget.rankingService!,
+                builder: (_, _) => _rankedBooks(featured),
+              ),
+          ],
+          const SizedBox(height: 28),
           Wrap(
             alignment: WrapAlignment.spaceBetween,
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 8,
             children: [
-              Text('Sách trong thư viện', key: _libraryKey, style: _heading),
+              Text(
+                context.tr("Sách trong thư viện"),
+                key: _libraryKey,
+                style: _heading,
+              ),
               if (filtered.length > 4)
                 TextButton.icon(
                   onPressed: () => setState(() => _showAll = !_showAll),
-                  style: TextButton.styleFrom(foregroundColor: _coral),
-                  label: Text(_showAll ? 'Thu gọn' : 'Xem thêm'),
+                  style: TextButton.styleFrom(foregroundColor: _highlight),
+                  label: Text(
+                    _showAll ? context.tr("Thu gọn") : context.tr("Xem thêm"),
+                  ),
                   icon: Icon(
                     _showAll ? Icons.expand_less : Icons.chevron_right,
                     size: 20,
@@ -766,14 +1023,14 @@ class _DiscoverPageState extends State<DiscoverPage> {
               width: 48,
               height: 4,
               decoration: BoxDecoration(
-                color: _coral,
+                color: _highlight,
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
           ),
           const SizedBox(height: 10),
           Text(
-            'Chọn một cuốn sách để khám phá',
+            context.tr("Chọn một cuốn sách để khám phá"),
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 14,
@@ -783,16 +1040,22 @@ class _DiscoverPageState extends State<DiscoverPage> {
           if (snapshot.connectionState != ConnectionState.done)
             const LoadingView()
           else if (snapshot.hasError)
-            ErrorView(
-              message: 'Không thể tải danh mục sách.',
-              onRetry: () => setState(() {
-                _books = widget.loadBooks();
-              }),
+            DefaultTextStyle.merge(
+              style: TextStyle(color: _text),
+              child: ErrorView(
+                message: context.tr("Không thể tải danh mục sách."),
+                onRetry: () => setState(() {
+                  _books = widget.loadBooks();
+                }),
+              ),
             )
           else if (filtered.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(24),
-              child: Text('Chưa có sách trong danh mục này.'),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(
+                context.tr("Chưa có sách trong danh mục này."),
+                style: TextStyle(color: _text),
+              ),
             )
           else
             LayoutBuilder(
@@ -840,13 +1103,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
             ),
           if (recommendations.isNotEmpty) ...[
             const SizedBox(height: 24),
-            const Text('Gợi ý cho bạn', style: _heading),
+            Text(context.tr("Gợi ý cho bạn"), style: _heading),
             const SizedBox(height: 12),
             for (final book in recommendations)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Material(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: _surface,
                   borderRadius: BorderRadius.circular(18),
                   child: InkWell(
                     onTap: () => widget.onBookTap(book),
@@ -870,15 +1133,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  book.authorLabel,
-                                  style: const TextStyle(
-                                    color: Color(0xFF686B74),
-                                  ),
+                                  context.tr(book.authorLabel),
+                                  style: TextStyle(color: _muted),
                                 ),
                                 if (book.categories.isNotEmpty) ...[
                                   const SizedBox(height: 6),
                                   Text(
-                                    book.categories.first,
+                                    context.tr(book.categories.first),
                                     style: const TextStyle(
                                       color: _coral,
                                       fontSize: 12,
@@ -889,10 +1150,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                               ],
                             ),
                           ),
-                          const Icon(
-                            Icons.chevron_right,
-                            color: Color(0xFF686B74),
-                          ),
+                          Icon(Icons.chevron_right, color: _muted),
                         ],
                       ),
                     ),
@@ -906,23 +1164,39 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   @override
-  Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
-    value: Theme.of(context).brightness == Brightness.dark
-        ? SystemUiOverlayStyle.light
-        : SystemUiOverlayStyle.dark,
-    child: ColoredBox(
-      color: Theme.of(context).colorScheme.surface,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            _header(),
-            FutureBuilder<List<Book>>(
-              future: _books,
-              builder: (_, snapshot) => _catalog(snapshot),
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Theme(
+      key: ValueKey('discover-theme-$dark'),
+      data: dark
+          ? AppTheme.dark.copyWith(
+              colorScheme: AppTheme.dark.colorScheme.copyWith(
+                primary: _gold,
+                surface: _panel,
+                onSurface: Colors.white,
+                onSurfaceVariant: _secondary,
+                outlineVariant: _line,
+              ),
+            )
+          : Theme.of(context),
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        child: ColoredBox(
+          key: const ValueKey('discover-background'),
+          color: _canvas,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _header(),
+                FutureBuilder<List<Book>>(
+                  future: _books,
+                  builder: (_, snapshot) => _catalog(snapshot),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }

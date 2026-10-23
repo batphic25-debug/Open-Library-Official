@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/widgets/book_cover.dart';
@@ -10,10 +11,12 @@ class ReadingBook {
     required this.book,
     required this.pagesRead,
     this.totalPages,
+    this.totalPagesEstimated = false,
   });
   final Book book;
   final int pagesRead;
   final int? totalPages;
+  final bool totalPagesEstimated;
 }
 
 class ReadingCard extends StatelessWidget {
@@ -64,7 +67,7 @@ class ReadingCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      reading.book.authorLabel,
+                      context.tr(reading.book.authorLabel),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -80,13 +83,15 @@ class ReadingCard extends StatelessWidget {
                               color: AppTheme.accent,
                               backgroundColor: const Color(0xFFECEDEF),
                               borderRadius: BorderRadius.circular(8),
-                              semanticsLabel:
-                                  'Tiến độ đọc: $pages/$total trang',
+                              semanticsLabel: context.tr(
+                                "Tiến độ đọc: {0}/{1} trang",
+                                [pages, total],
+                              ),
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            '${(progress * 100).round()}%',
+                            '${reading.totalPagesEstimated ? '~' : ''}${((pages * 100) ~/ total!).clamp(0, 100)}%',
                             style: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
@@ -104,7 +109,7 @@ class ReadingCard extends StatelessWidget {
                         ),
                       ),
                     ] else
-                      Text('Đã đọc $pages trang'),
+                      Text(context.tr("Đã đọc {0} trang", [pages])),
                     const SizedBox(height: 12),
                     FilledButton(
                       onPressed: onUpdate ?? onTap,
@@ -124,12 +129,12 @@ class ReadingCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Wrap(
+                      child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 2,
                         children: [
                           Icon(Icons.edit_outlined, size: 18),
-                          Text('Cập nhật'),
+                          Text(context.tr("Cập nhật")),
                         ],
                       ),
                     ),

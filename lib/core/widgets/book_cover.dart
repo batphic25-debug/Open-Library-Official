@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import '../../features/books/models/book.dart';
@@ -24,6 +25,7 @@ class BookCover extends StatelessWidget {
           ?.where((entry) => entry.id == book.id)
           .firstOrNull;
       return _cover(
+        context,
         coverAsset: catalogBook?.coverAsset ?? book.coverAsset,
         isIllustration:
             catalogBook?.coverIsIllustration ?? book.coverIsIllustration,
@@ -32,7 +34,8 @@ class BookCover extends StatelessWidget {
     },
   );
 
-  Widget _cover({
+  Widget _cover(
+    BuildContext context, {
     String? coverAsset,
     required bool isIllustration,
     required bool loadingCatalog,
@@ -40,8 +43,8 @@ class BookCover extends StatelessWidget {
     final fallback = _DesignedCover(book: book);
     final cover = Semantics(
       label: isIllustration
-          ? 'Bìa minh họa ${book.title}'
-          : 'Bìa sách ${book.title}',
+          ? context.tr("Bìa minh họa {0}", [book.title])
+          : context.tr("Bìa sách {0}", [book.title]),
       image: true,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
@@ -71,7 +74,10 @@ class BookCover extends StatelessWidget {
       ),
     );
     return isIllustration && coverAsset != null
-        ? Tooltip(message: 'Ảnh minh họa có sẵn trong dự án', child: cover)
+        ? Tooltip(
+            message: context.tr("Ảnh minh họa có sẵn trong dự án"),
+            child: cover,
+          )
         : cover;
   }
 }
@@ -93,9 +99,9 @@ class _DesignedCover extends StatelessWidget {
         colors[book.id.codeUnits.fold<int>(0, (sum, unit) => sum + unit) %
             colors.length];
     return Tooltip(
-      message: 'Bìa thay thế · Chưa có ảnh bìa',
+      message: context.tr("Bìa thay thế · Chưa có ảnh bìa"),
       child: Semantics(
-        label: 'Bìa thay thế',
+        label: context.tr("Bìa thay thế"),
         child: ExcludeSemantics(
           child: DecoratedBox(
             decoration: BoxDecoration(
@@ -148,7 +154,7 @@ class _DesignedCover extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         text: TextSpan(
-                          text: book.authorLabel,
+                          text: context.tr(book.authorLabel),
                           style: DefaultTextStyle.of(context).style.copyWith(
                             fontSize: 9,
                             color: const Color(0xFFF2D5A0),
@@ -156,8 +162,8 @@ class _DesignedCover extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      const Text(
-                        'BÌA THAY THẾ',
+                      Text(
+                        context.tr("BÌA THAY THẾ"),
                         textScaler: TextScaler.noScaling,
                         style: TextStyle(
                           fontSize: 7,

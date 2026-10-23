@@ -23,97 +23,125 @@ class AuthLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
-      child: Scaffold(
-        body: Align(
-          alignment: Alignment.topCenter,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Phần đầu và thanh trạng thái dùng chung nền chuyển màu.
-                  AnnotatedRegion<SystemUiOverlayStyle>(
-                    value: SystemUiOverlayStyle.light,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: AppTheme.gradient,
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(32),
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final authTheme = dark
+        ? theme.copyWith(
+            scaffoldBackgroundColor: const Color(0xFF1B1D21),
+            inputDecorationTheme: theme.inputDecorationTheme.copyWith(
+              fillColor: const Color(0xFF272A30),
+              hintStyle: const TextStyle(color: Color(0xFF9DA6B6)),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Color(0xFF596170)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(
+                  color: Color(0xFFFF786A),
+                  width: 1.5,
+                ),
+              ),
+            ),
+          )
+        : theme;
+    return Theme(
+      data: authTheme,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        child: Scaffold(
+          body: Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Phần đầu và thanh trạng thái dùng chung nền chuyển màu.
+                    AnnotatedRegion<SystemUiOverlayStyle>(
+                      value: SystemUiOverlayStyle.light,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: AppTheme.gradient,
+                          borderRadius: BorderRadius.vertical(
+                            bottom: Radius.circular(32),
+                          ),
+                        ),
+                        child: SafeArea(
+                          bottom: false,
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  32,
+                                  hero ? 50 : 44,
+                                  32,
+                                  hero ? 18 : 28,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/logo.png',
+                                      height: hero ? 94 : 72,
+                                      width: double.infinity,
+                                      fit: BoxFit.contain,
+                                      semanticLabel: 'Open Library',
+                                    ),
+                                    if (hero) ...[
+                                      const SizedBox(height: 20),
+                                      const SizedBox(
+                                        height: 152,
+                                        width: 280,
+                                        child: BookIllustration(),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                              if (showBack)
+                                Positioned(
+                                  top: 4,
+                                  left: 8,
+                                  child: BackButton(color: Colors.white),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
-                      child: SafeArea(
-                        bottom: false,
-                        child: Stack(
+                    ),
+                    SafeArea(
+                      top: false,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                32,
-                                hero ? 50 : 44,
-                                32,
-                                hero ? 12 : 28,
-                              ),
-                              child: Column(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/logo.png',
-                                    height: hero ? 94 : 72,
-                                    width: double.infinity,
-                                    fit: BoxFit.contain,
-                                    semanticLabel: 'Open Library',
-                                  ),
-                                  if (hero) ...[
-                                    const SizedBox(height: 16),
-                                    const SizedBox(
-                                      height: 138,
-                                      width: 240,
-                                      child: BookIllustration(),
-                                    ),
-                                  ],
-                                ],
+                            Text(
+                              title,
+                              style: Theme.of(context).textTheme.headlineLarge,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              subtitle,
+                              style: TextStyle(
+                                color: dark
+                                    ? const Color(0xFF98A3B5)
+                                    : theme.colorScheme.onSurfaceVariant,
+                                fontSize: 16,
+                                height: 1.5,
                               ),
                             ),
-                            if (showBack)
-                              Positioned(
-                                top: 4,
-                                left: 8,
-                                child: BackButton(color: Colors.white),
-                              ),
+                            const SizedBox(height: 28),
+                            child,
                           ],
                         ),
                       ),
                     ),
-                  ),
-                  SafeArea(
-                    top: false,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            title,
-                            style: Theme.of(context).textTheme.headlineLarge,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            subtitle,
-                            style: const TextStyle(
-                              color: AppTheme.muted,
-                              fontSize: 16,
-                              height: 1.5,
-                            ),
-                          ),
-                          const SizedBox(height: 28),
-                          child,
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -142,6 +170,43 @@ class AuthField extends StatelessWidget {
   );
 }
 
+class AuthInputIcon extends StatelessWidget {
+  const AuthInputIcon(this.icon, {super.key});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = Theme.of(context).colorScheme.primary;
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(start: 12, end: 10),
+      child: Center(
+        widthFactor: 1,
+        heightFactor: 1,
+        child: Container(
+          width: 42,
+          height: 42,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                accent.withValues(alpha: .16),
+                accent.withValues(alpha: .06),
+              ],
+            ),
+            border: Border.all(color: accent.withValues(alpha: .18)),
+            borderRadius: BorderRadius.circular(13),
+          ),
+          child: ExcludeSemantics(child: Icon(icon, size: 22, color: accent)),
+        ),
+      ),
+    );
+  }
+}
+
+// 3. Class AuthField — Hiển thị nhãn ô nhập liệu
 class PasswordField extends StatefulWidget {
   const PasswordField({
     super.key,
@@ -151,6 +216,7 @@ class PasswordField extends StatefulWidget {
     this.newPassword = false,
     this.onSubmitted,
     this.enabled = true,
+    this.minimal = false,
   });
   final TextEditingController controller;
   final String label;
@@ -158,6 +224,7 @@ class PasswordField extends StatefulWidget {
   final bool newPassword;
   final ValueChanged<String>? onSubmitted;
   final bool enabled;
+  final bool minimal;
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -167,39 +234,55 @@ class _PasswordFieldState extends State<PasswordField> {
   bool _obscure = true;
 
   @override
-  Widget build(BuildContext context) => AuthField(
-    label: widget.label,
-    child: TextFormField(
-      controller: widget.controller,
-      enabled: widget.enabled,
-      obscureText: _obscure,
-      autocorrect: false,
-      enableSuggestions: false,
-      autofillHints: [
-        widget.newPassword ? AutofillHints.newPassword : AutofillHints.password,
-      ],
-      textInputAction: widget.onSubmitted == null
-          ? TextInputAction.next
-          : TextInputAction.done,
-      onFieldSubmitted: widget.onSubmitted,
-      validator: widget.validator,
-      decoration: InputDecoration(
-        hintText: widget.newPassword ? 'Ít nhất 8 ký tự' : 'Nhập mật khẩu',
-        prefixIcon: const Icon(Icons.lock_outline_rounded),
-        suffixIcon: IconButton(
-          tooltip: _obscure ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
-          onPressed: widget.enabled
-              ? () => setState(() => _obscure = !_obscure)
-              : null,
-          icon: Icon(
-            _obscure
-                ? Icons.visibility_outlined
-                : Icons.visibility_off_outlined,
-          ),
-        ),
-      ),
-    ),
-  );
+  Widget build(BuildContext context) =>
+      ValueListenableBuilder<TextEditingValue>(
+        valueListenable: widget.controller,
+        builder: (context, value, _) {
+          final field = TextFormField(
+            controller: widget.controller,
+            enabled: widget.enabled,
+            obscureText: _obscure,
+            autocorrect: false,
+            enableSuggestions: false,
+            autofillHints: [
+              widget.newPassword
+                  ? AutofillHints.newPassword
+                  : AutofillHints.password,
+            ],
+            textInputAction: widget.onSubmitted == null
+                ? TextInputAction.next
+                : TextInputAction.done,
+            onFieldSubmitted: widget.onSubmitted,
+            validator: widget.validator,
+            decoration: InputDecoration(
+              hintText: widget.minimal
+                  ? widget.label
+                  : widget.newPassword
+                  ? 'Ít nhất 8 ký tự'
+                  : 'Nhập mật khẩu',
+              prefixIcon: widget.minimal
+                  ? null
+                  : const AuthInputIcon(Icons.lock_rounded),
+              suffixIcon: widget.minimal && value.text.isEmpty
+                  ? null
+                  : IconButton(
+                      tooltip: _obscure ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
+                      onPressed: widget.enabled
+                          ? () => setState(() => _obscure = !_obscure)
+                          : null,
+                      icon: Icon(
+                        _obscure
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                    ),
+            ),
+          );
+          return widget.minimal
+              ? Semantics(label: widget.label, child: field)
+              : AuthField(label: widget.label, child: field);
+        },
+      );
 }
 
 class AuthButton extends StatefulWidget {
@@ -402,25 +485,28 @@ class AuthNotice extends StatelessWidget {
   final bool error;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    liveRegion: true,
-    child: Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: error ? const Color(0xFFFFE9EB) : const Color(0xFFFFF0E7),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        message,
-        style: TextStyle(
-          color: error ? const Color(0xFFAB1436) : AppTheme.muted,
-          fontSize: 13,
-          height: 1.5,
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Semantics(
+      liveRegion: true,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: error ? scheme.errorContainer : scheme.primaryContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          message,
+          style: TextStyle(
+            color: error ? scheme.onErrorContainer : scheme.onPrimaryContainer,
+            fontSize: 13,
+            height: 1.5,
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class BookIllustration extends StatefulWidget {

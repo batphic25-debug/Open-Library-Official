@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import '../auth/auth_service.dart';
@@ -39,7 +40,15 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đã đổi mật khẩu trong phiên mô phỏng.')),
+        SnackBar(
+          content: Text(
+            context.tr(
+              widget.authService.apiClient == null
+                  ? 'Đã đổi mật khẩu cho phiên này.'
+                  : 'Đã đổi mật khẩu. Vui lòng đăng nhập lại.',
+            ),
+          ),
+        ),
       );
       Navigator.of(context).pop();
     } on AuthException catch (error) {
@@ -55,7 +64,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Đổi mật khẩu')),
+    appBar: AppBar(title: Text(context.tr("Đổi mật khẩu"))),
     body: SafeArea(
       child: Center(
         child: ConstrainedBox(
@@ -68,35 +77,39 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 TextFormField(
                   controller: _old,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Mật khẩu hiện tại',
+                  decoration: InputDecoration(
+                    labelText: context.tr("Mật khẩu hiện tại"),
                   ),
                   validator: (value) => (value ?? '').isEmpty
-                      ? 'Vui lòng nhập mật khẩu hiện tại'
+                      ? context.tr("Vui lòng nhập mật khẩu hiện tại")
                       : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _next,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Mật khẩu mới'),
-                  validator: AuthService.validatePassword,
+                  decoration: InputDecoration(
+                    labelText: context.tr("Mật khẩu mới"),
+                  ),
+                  validator: (value) =>
+                      context.trValidation(AuthService.validatePassword(value)),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _confirm,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Nhập lại mật khẩu mới',
+                  decoration: InputDecoration(
+                    labelText: context.tr("Nhập lại mật khẩu mới"),
                   ),
-                  validator: (value) =>
-                      value != _next.text ? 'Hai mật khẩu không khớp' : null,
+                  validator: (value) => value != _next.text
+                      ? context.tr("Hai mật khẩu không khớp")
+                      : null,
                 ),
                 if (_error != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 12),
                     child: Text(
-                      _error!,
+                      context.trError(_error!),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.error,
                       ),
@@ -105,12 +118,19 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 const SizedBox(height: 22),
                 FilledButton(
                   onPressed: _saving ? null : _save,
-                  child: Text(_saving ? 'Đang lưu...' : 'Đổi mật khẩu'),
+                  child: Text(
+                    _saving
+                        ? context.tr("Đang lưu...")
+                        : context.tr("Đổi mật khẩu"),
+                  ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Bản mô phỏng: mật khẩu mới chỉ có hiệu lực đến khi khởi động lại ứng dụng.',
-                ),
+                if (widget.authService.apiClient == null)
+                  Text(
+                    context.tr(
+                      'Mật khẩu mới chỉ có hiệu lực đến khi khởi động lại ứng dụng.',
+                    ),
+                  ),
               ],
             ),
           ),

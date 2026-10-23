@@ -1,3 +1,5 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -64,13 +66,7 @@ class _BookReadingPageState extends State<BookReadingPage> {
     _scroll = ScrollController(initialScrollOffset: saved?.offset ?? 0)
       ..addListener(_onScroll);
     final content = await OfflineBookLibrary.load(bundled);
-    final textLength = content.paragraphs.fold<int>(
-      0,
-      (length, paragraph) => length + paragraph.length,
-    );
-    _totalPages =
-        widget.book.selectedEdition?.pages ??
-        (textLength / 1800).ceil().clamp(1, 10000);
+    _totalPages = content.pageCount(widget.book);
     for (var index = 0; index < content.paragraphs.length; index++) {
       if (_isChapter(content.paragraphs[index])) {
         _chapters.add(index);
@@ -125,7 +121,9 @@ class _BookReadingPageState extends State<BookReadingPage> {
     final total = _totalPages;
     final onPageChanged = widget.onPageChanged;
     if (total == null || onPageChanged == null) return;
-    final page = (1 + (_progress.value * (total - 1)).round()).clamp(1, total);
+    final page = _progress.value >= 1
+        ? total
+        : (1 + (_progress.value * (total - 1)).round()).clamp(0, total - 1);
     if (page == _lastReportedPage) return;
     _lastReportedPage = page;
     onPageChanged(widget.book, page).catchError((Object _) {
@@ -145,15 +143,19 @@ class _BookReadingPageState extends State<BookReadingPage> {
   void _showLicense(String license, {bool local = false}) => showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text(local ? 'Thông tin nguồn' : 'Giấy phép bản văn'),
+      title: Text(
+        local ? context.tr("Thông tin nguồn") : context.tr("Giấy phép bản văn"),
+      ),
       content: SizedBox(
         width: 560,
-        child: SingleChildScrollView(child: SelectableText(license)),
+        child: SingleChildScrollView(
+          child: SelectableText(local ? context.tr(license) : license),
+        ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Đóng'),
+          child: Text(context.tr("Đóng")),
         ),
       ],
     ),
@@ -173,14 +175,14 @@ class _BookReadingPageState extends State<BookReadingPage> {
         backgroundColor: paper,
         surfaceTintColor: Colors.transparent,
         title: Text(
-          'Đọc sách',
+          context.tr("Đọc sách"),
           style: TextStyle(color: ink, fontWeight: FontWeight.w700),
         ),
         actions: bundled == null
             ? null
             : [
                 IconButton(
-                  tooltip: 'Giảm cỡ chữ',
+                  tooltip: context.tr("Giảm cỡ chữ"),
                   color: ink,
                   onPressed: _fontSize <= 14
                       ? null
@@ -191,7 +193,7 @@ class _BookReadingPageState extends State<BookReadingPage> {
                   icon: const Icon(Icons.text_decrease),
                 ),
                 IconButton(
-                  tooltip: 'Tăng cỡ chữ',
+                  tooltip: context.tr("Tăng cỡ chữ"),
                   color: ink,
                   onPressed: _fontSize >= 28
                       ? null
@@ -218,8 +220,10 @@ class _BookReadingPageState extends State<BookReadingPage> {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'Chưa có bản văn được phép lưu trong ứng dụng cho sách này.',
+                    Text(
+                      context.tr(
+                        "Chưa có bản văn được phép lưu trong ứng dụng cho sách này.",
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -230,8 +234,8 @@ class _BookReadingPageState extends State<BookReadingPage> {
               future: _text,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return const Center(
-                    child: Text('Không thể mở bản văn đã lưu.'),
+                  return Center(
+                    child: Text(context.tr("Không thể mở bản văn đã lưu.")),
                   );
                 }
                 if (!snapshot.hasData) {
@@ -293,7 +297,7 @@ class _BookReadingPageState extends State<BookReadingPage> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'THƯ VIỆN OFFLINE',
+                                                context.tr("THƯ VIỆN OFFLINE"),
                                                 style: TextStyle(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w800,
@@ -315,7 +319,9 @@ class _BookReadingPageState extends State<BookReadingPage> {
                                               ),
                                               const SizedBox(height: 6),
                                               Text(
-                                                widget.book.authorLabel,
+                                                context.tr(
+                                                  widget.book.authorLabel,
+                                                ),
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   color: muted,
@@ -335,8 +341,13 @@ class _BookReadingPageState extends State<BookReadingPage> {
                                     const SizedBox(height: 12),
                                     Text(
                                       bundled.gutenbergId == null
-                                          ? 'Văn bản trình bày lại từ PDF đã lưu'
-                                          : 'Bản văn tiếng Anh lưu sẵn · Project Gutenberg #${bundled.gutenbergId}',
+                                          ? context.tr(
+                                              "Văn bản trình bày lại từ PDF đã lưu",
+                                            )
+                                          : context.tr(
+                                              "Bản văn tiếng Anh lưu sẵn · Project Gutenberg #{0}",
+                                              [bundled.gutenbergId],
+                                            ),
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: muted,
@@ -353,15 +364,20 @@ class _BookReadingPageState extends State<BookReadingPage> {
                                       ),
                                       label: Text(
                                         bundled.gutenbergId == null
-                                            ? 'Thông tin nguồn'
-                                            : 'Giấy phép và thông tin nguồn',
+                                            ? context.tr("Thông tin nguồn")
+                                            : context.tr(
+                                                "Giấy phép và thông tin nguồn",
+                                              ),
                                       ),
                                     ),
                                     const SizedBox(height: 28),
                                     Text(
                                       _chapters.isEmpty
-                                          ? 'NỘI DUNG SÁCH'
-                                          : 'NỘI DUNG · ${_chapters.length} CHƯƠNG',
+                                          ? context.tr("NỘI DUNG SÁCH")
+                                          : context.tr(
+                                              "NỘI DUNG · {0} CHƯƠNG",
+                                              [_chapters.length],
+                                            ),
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w800,
@@ -476,13 +492,13 @@ class _BookReadingPageState extends State<BookReadingPage> {
                             Expanded(
                               child: Text(
                                 widget.settings == null
-                                    ? 'Đang đọc trên thiết bị'
-                                    : 'Tự lưu vị trí đọc',
+                                    ? context.tr("Đang đọc trên thiết bị")
+                                    : context.tr("Tự lưu vị trí đọc"),
                                 style: TextStyle(fontSize: 12, color: muted),
                               ),
                             ),
                             Text(
-                              '~${(progress * 100).round()}%',
+                              '~${(progress * 100).floor()}%',
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,

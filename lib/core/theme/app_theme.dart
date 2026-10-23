@@ -141,5 +141,18 @@ class AppTheme {
       fillColor: const Color(0xFF343544),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
     ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        minimumSize: const Size(0, 48),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: const Color(0xFFFF786A),
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+      ),
+    ),
   );
 }

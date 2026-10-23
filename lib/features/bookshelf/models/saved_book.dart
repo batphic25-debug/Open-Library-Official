@@ -17,11 +17,14 @@ class SavedBook {
     required this.pagesRead,
     required this.addedAt,
     required this.updatedAt,
+    this.estimatedTotalPages,
+    this.version = 1,
   }) {
     libraryKey(book.id, 'works', 'W');
     if (userId.isEmpty ||
         book.title.trim().isEmpty ||
         pagesRead < 0 ||
+        (estimatedTotalPages != null && estimatedTotalPages! <= 0) ||
         (totalPages != null && pagesRead > totalPages!) ||
         (book.selectedEdition != null &&
             !book.selectedEdition!.workIds.contains(book.id))) {
@@ -33,14 +36,20 @@ class SavedBook {
   final Book book;
   final ReadingStatus status;
   final int pagesRead;
+  // Reading units for bundled text without an edition page count.
+  final int? estimatedTotalPages;
+  final int version;
   final DateTime addedAt;
   final DateTime updatedAt;
   String get id => book.id;
   String? get editionId => book.selectedEdition?.id;
   int? get totalPages {
     final pages = book.selectedEdition?.pages;
-    return pages != null && pages > 0 ? pages : null;
+    return pages != null && pages > 0 ? pages : estimatedTotalPages;
   }
+
+  bool get totalPagesEstimated =>
+      (book.selectedEdition?.pages ?? 0) <= 0 && estimatedTotalPages != null;
 
   double? get progress => totalPages == null ? null : pagesRead / totalPages!;
 
@@ -50,6 +59,8 @@ class SavedBook {
         book: book ?? this.book,
         status: status ?? this.status,
         pagesRead: pagesRead ?? this.pagesRead,
+        estimatedTotalPages: book == null ? estimatedTotalPages : null,
+        version: version,
         addedAt: addedAt,
         updatedAt: DateTime.now().toUtc(),
       );
@@ -60,6 +71,8 @@ class SavedBook {
       'userId': userId,
       'status': status.name,
       'pagesRead': pagesRead,
+      'estimatedTotalPages': estimatedTotalPages,
+      'version': version,
       'addedAt': addedAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'book': {
@@ -100,6 +113,8 @@ class SavedBook {
       userId: json['userId'] as String,
       status: ReadingStatus.values.byName(json['status'] as String),
       pagesRead: json['pagesRead'] as int,
+      estimatedTotalPages: json['estimatedTotalPages'] as int?,
+      version: json['version'] as int? ?? 1,
       addedAt: DateTime.parse(json['addedAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       book: Book(
@@ -121,6 +136,30 @@ class SavedBook {
                 Map<String, dynamic>.from(data['selectedEdition'] as Map),
               ),
       ),
+    );
+  }
+
+  factory SavedBook.fromApiJson(Map<String, dynamic> json, String userId) {
+    final status = switch (json['status']) {
+      'want_to_read' => ReadingStatus.wantToRead,
+      'reading' => ReadingStatus.reading,
+      'finished' => ReadingStatus.read,
+      _ => throw const FormatException('Invalid reading status'),
+    };
+    final book = Book.fromApiJson(
+      Map<String, dynamic>.from(json['book'] as Map),
+    );
+    return SavedBook(
+      userId: userId,
+      book: book,
+      status: status,
+      pagesRead: json['pagesRead'] as int,
+      estimatedTotalPages: book.selectedEdition?.pages == null
+          ? json['totalPages'] as int?
+          : null,
+      version: json['version'] as int,
+      addedAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 }

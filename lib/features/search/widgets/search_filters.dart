@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -46,7 +47,9 @@ class SearchFilters extends StatelessWidget {
           position: PopupMenuPosition.under,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
-            side: const BorderSide(color: AppTheme.border),
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
           ),
           textStyle: TextStyle(
             fontSize: 15,
@@ -60,7 +63,7 @@ class SearchFilters extends StatelessWidget {
             SizedBox(
               width: width,
               child: PopupMenuButton<String>(
-                tooltip: 'Lọc ngôn ngữ',
+                tooltip: context.tr("Lọc ngôn ngữ"),
                 offset: const Offset(0, 8),
                 constraints: const BoxConstraints(minWidth: 240, maxWidth: 320),
                 initialValue: language ?? 'all',
@@ -72,7 +75,7 @@ class SearchFilters extends StatelessWidget {
                         value: entry.key,
                         checked: entry.key == (language ?? 'all'),
                         child: Text(
-                          entry.value,
+                          context.tr(entry.value),
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: entry.key == (language ?? 'all')
@@ -88,14 +91,16 @@ class SearchFilters extends StatelessWidget {
                     .toList(),
                 child: _FilterLabel(
                   icon: Icons.language,
-                  text: language == null ? 'Ngôn ngữ' : languages[language]!,
+                  text: language == null
+                      ? context.tr("Ngôn ngữ")
+                      : context.tr(languages[language]!),
                 ),
               ),
             ),
             SizedBox(
               width: width,
               child: PopupMenuButton<BookSort>(
-                tooltip: 'Sắp xếp sách',
+                tooltip: context.tr("Sắp xếp sách"),
                 offset: const Offset(0, 8),
                 constraints: const BoxConstraints(minWidth: 240, maxWidth: 320),
                 initialValue: sort,
@@ -106,7 +111,7 @@ class SearchFilters extends StatelessWidget {
                         value: entry.key,
                         checked: entry.key == sort,
                         child: Text(
-                          entry.value,
+                          context.tr(entry.value),
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: entry.key == sort
@@ -122,7 +127,9 @@ class SearchFilters extends StatelessWidget {
                     .toList(),
                 child: _FilterLabel(
                   icon: Icons.sort,
-                  text: sort == BookSort.relevance ? 'Sắp xếp' : sorts[sort]!,
+                  text: sort == BookSort.relevance
+                      ? context.tr("Sắp xếp")
+                      : context.tr(sorts[sort]!),
                 ),
               ),
             ),

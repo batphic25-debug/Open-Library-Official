@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import '../../features/books/models/book.dart';
@@ -54,8 +55,8 @@ class BookCard extends StatelessWidget {
                     : IconButton(
                         padding: EdgeInsets.zero,
                         tooltip: saved
-                            ? 'Đã có trong tủ sách'
-                            : 'Lưu vào tủ sách',
+                            ? context.tr("Đã có trong tủ sách")
+                            : context.tr("Lưu vào tủ sách"),
                         onPressed: onSave,
                         icon: Icon(
                           saved ? Icons.bookmark : Icons.bookmark_border,
@@ -70,7 +71,7 @@ class BookCard extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         Text(
-          book.authorLabel,
+          context.tr(book.authorLabel),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
@@ -90,10 +91,10 @@ class BookCard extends StatelessWidget {
             ),
             child: Text(
               book.categories.isNotEmpty
-                  ? book.categories.first
+                  ? context.tr(book.categories.first)
                   : book.firstPublishYear != null
-                  ? 'Xuất bản ${book.firstPublishYear}'
-                  : 'Sách',
+                  ? context.tr("Xuất bản {0}", [book.firstPublishYear])
+                  : context.tr("Sách"),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -114,7 +115,9 @@ class BookCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
           side: BorderSide(
-            color: compact ? Colors.transparent : AppTheme.border,
+            color: compact
+                ? Colors.transparent
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
         child: InkWell(
@@ -211,8 +214,8 @@ class BookCard extends StatelessWidget {
                                     )
                                   : IconButton(
                                       tooltip: saved
-                                          ? 'Đã có trong tủ sách'
-                                          : 'Lưu vào tủ sách',
+                                          ? context.tr("Đã có trong tủ sách")
+                                          : context.tr("Lưu vào tủ sách"),
                                       onPressed: onSave,
                                       icon: Icon(
                                         saved
@@ -243,7 +246,7 @@ class BookCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      book.authorLabel,
+                      context.tr(book.authorLabel),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: muted, fontSize: 14),
@@ -264,7 +267,7 @@ class BookCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              book.categories.firstOrNull ?? 'Sách',
+                              context.tr(book.categories.firstOrNull ?? "Sách"),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(

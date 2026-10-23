@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/material.dart';
 
 import 'bookshelf_service.dart';
@@ -71,8 +72,8 @@ class _ReadingProgressSheetState extends State<ReadingProgressSheet> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    'Cập nhật tiến độ',
+                  Text(
+                    context.tr("Cập nhật tiến độ"),
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 8),
@@ -85,10 +86,12 @@ class _ReadingProgressSheetState extends State<ReadingProgressSheet> {
                     controller: _pages,
                     enabled: !_saving,
                     decoration: InputDecoration(
-                      labelText: 'Số trang đã đọc',
+                      labelText: context.tr("Số trang đã đọc"),
                       helperText: total == null
-                          ? 'Chưa có tổng số trang của phiên bản này.'
-                          : 'Tổng số trang: $total',
+                          ? context.tr(
+                              "Chưa có tổng số trang của phiên bản này.",
+                            )
+                          : context.tr("Tổng số trang: {0}", [total]),
                       prefixIcon: const Icon(Icons.auto_stories_outlined),
                     ),
                     keyboardType: TextInputType.number,
@@ -101,10 +104,12 @@ class _ReadingProgressSheetState extends State<ReadingProgressSheet> {
                     validator: (value) {
                       final number = int.tryParse(value?.trim() ?? '');
                       if (number == null || number < 0) {
-                        return 'Nhập số nguyên từ 0 trở lên.';
+                        return context.tr("Nhập số nguyên từ 0 trở lên.");
                       }
                       if (total != null && number > total) {
-                        return 'Không được vượt quá $total trang.';
+                        return context.tr("Không được vượt quá {0} trang.", [
+                          total,
+                        ]);
                       }
                       return null;
                     },
@@ -121,16 +126,24 @@ class _ReadingProgressSheetState extends State<ReadingProgressSheet> {
                       color: const Color(0xFFFF554C),
                     ),
                     const SizedBox(height: 8),
-                    Text('${(pages / total * 100).round()}% đã đọc'),
+                    Text(context.tr("{0}% đã đọc", [(pages * 100) ~/ total])),
                   ],
                   CheckboxListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('Đánh dấu Đã đọc'),
-                    subtitle: !canComplete
-                        ? const Text('Đọc hết số trang để đánh dấu hoàn thành.')
+                    title: Text(context.tr("Đánh dấu Đã đọc")),
+                    subtitle: total != null && pages == total
+                        ? Text(
+                            context.tr("Sách sẽ tự chuyển vào Đã đọc khi lưu."),
+                          )
+                        : !canComplete
+                        ? Text(
+                            context.tr(
+                              "Đọc hết số trang để đánh dấu hoàn thành.",
+                            ),
+                          )
                         : null,
-                    value: _completed,
-                    onChanged: _saving || !canComplete
+                    value: _completed || (total != null && pages == total),
+                    onChanged: _saving || !canComplete || total != null
                         ? null
                         : (value) => setState(() => _completed = value!),
                   ),
@@ -138,7 +151,7 @@ class _ReadingProgressSheetState extends State<ReadingProgressSheet> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Text(
-                        _error!,
+                        context.trError(_error!),
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),
@@ -150,7 +163,11 @@ class _ReadingProgressSheetState extends State<ReadingProgressSheet> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.check),
-                    label: Text(_saving ? 'Đang lưu…' : 'Lưu tiến độ'),
+                    label: Text(
+                      _saving
+                          ? context.tr("Đang lưu…")
+                          : context.tr("Lưu tiến độ"),
+                    ),
                   ),
                 ],
               ),

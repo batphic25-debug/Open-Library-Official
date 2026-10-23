@@ -10,4 +10,11 @@ class UserProfile {
   final String displayName;
   final String email;
   final String? avatarPath;
+
+  factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
+    id: json['id'] as String,
+    displayName: json['displayName'] as String,
+    email: json['email'] as String,
+    avatarPath: json['avatarUrl'] as String?,
+  );
 }

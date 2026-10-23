@@ -12,6 +12,7 @@ import 'package:open_library_client/features/bookshelf/bookshelf_service.dart';
 import 'package:open_library_client/features/books/services/sample_books.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:open_library_client/app.dart';
+import 'package:open_library_client/core/theme/appearance_store.dart';
 import 'package:open_library_client/features/auth/auth_service.dart';
 import 'package:open_library_client/features/auth/forgot_password_page.dart';
 import 'package:open_library_client/features/auth/login_page.dart';
@@ -55,6 +56,8 @@ Future<void> start(
   AuthService auth, {
   void Function(SettingsService)? onSettings,
 }) async {
+  final settingsDatabaseFactory = newDatabaseFactoryMemory();
+  final appearanceDatabaseFactory = newDatabaseFactoryMemory();
   await tester.runAsync(SampleBooks.load);
   // Keep auth-flow tests and still captures independent of looping decoration.
   tester.platformDispatcher.accessibilityFeaturesTestValue =
@@ -67,6 +70,10 @@ Future<void> start(
   await tester.pumpWidget(
     OpenLibraryApp(
       authService: auth,
+      appearanceStore: AppearanceStore(
+        openDatabase: () =>
+            appearanceDatabaseFactory.openDatabase('appearance'),
+      ),
       bookshelfFactory: (id) => BookshelfService(
         userId: id,
         openDatabase: () => newDatabaseFactoryMemory().openDatabase(id),
@@ -75,7 +82,7 @@ Future<void> start(
         final settings = SettingsService(
           userId: id,
           openDatabase: () =>
-              newDatabaseFactoryMemory().openDatabase('settings-$id'),
+              settingsDatabaseFactory.openDatabase('settings-$id'),
         );
         onSettings?.call(settings);
         return settings;
@@ -249,6 +256,9 @@ void main() {
         AuthService.demoPassword,
       );
       await tapVisible(tester, find.byType(FilledButton));
+      ScaffoldMessenger.of(tester.element(find.text('Đăng xuất')))
+          .clearSnackBars();
+      await tester.pumpAndSettle();
       await tapVisible(tester, find.text('Đăng xuất'));
       expect(find.byType(LoginPage), findsOneWidget);
       await tester.enterText(
@@ -261,39 +271,86 @@ void main() {
     },
   );
 
-  testWidgets('profile opens bookshelf and applies saved appearance', (
-    tester,
-  ) async {
-    final auth = AuthService();
-    addTearDown(auth.dispose);
-    await start(tester, auth);
-    await tester.enterText(
-      find.byType(TextFormField).first,
-      AuthService.demoEmail,
-    );
-    await tester.enterText(
-      find.byType(TextFormField).last,
-      AuthService.demoPassword,
-    );
-    await tapVisible(tester, find.byType(FilledButton));
-    await tapVisible(tester, find.byIcon(Icons.person_outline));
-    expect(find.text('Tủ sách của tôi'), findsOneWidget);
-    await tapVisible(tester, find.text('Tủ sách của tôi'));
-    expect(find.text('Muốn đọc'), findsOneWidget);
-    await tapVisible(tester, find.text('Cá nhân').last);
-    await tapVisible(tester, find.byTooltip('Cài đặt'));
-    await tapVisible(tester, find.text('English'));
-    expect(find.text('Settings'), findsOneWidget);
-    await tapVisible(tester, find.text('Dark'));
-    expect(
-      Theme.of(tester.element(find.text('Settings'))).brightness,
-      Brightness.dark,
-    );
-    await tester.pageBack();
-    await tester.pumpAndSettle();
-    expect(find.text('My bookshelf'), findsOneWidget);
-    expect(find.text('Bookshelf'), findsOneWidget);
-  });
+  testWidgets(
+    'first login starts light and later logins restore chosen dark mode',
+    (tester) async {
+      final auth = AuthService();
+      addTearDown(auth.dispose);
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+      addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+      await start(tester, auth);
+      expect(
+        tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+        ThemeMode.light,
+      );
+      expect(
+        Theme.of(tester.element(find.byType(TextFormField).first))
+            .inputDecorationTheme
+            .fillColor,
+        Colors.white,
+      );
+      await tester.enterText(
+        find.byType(TextFormField).first,
+        AuthService.demoEmail,
+      );
+      await tester.enterText(
+        find.byType(TextFormField).last,
+        AuthService.demoPassword,
+      );
+      await tapVisible(tester, find.byType(FilledButton));
+      expect(
+        Theme.of(tester.element(find.byType(MainShell))).brightness,
+        Brightness.light,
+      );
+      await tapVisible(tester, find.byIcon(Icons.person_outline));
+      expect(find.text('Tủ sách của tôi'), findsOneWidget);
+      await tapVisible(tester, find.text('Tủ sách của tôi'));
+      expect(find.text('Muốn đọc'), findsOneWidget);
+      await tapVisible(tester, find.text('Cá nhân').last);
+      await tapVisible(tester, find.byTooltip('Cài đặt'));
+      await tapVisible(tester, find.text('English'));
+      expect(find.text('Settings'), findsOneWidget);
+      await tapVisible(tester, find.text('Dark'));
+      expect(
+        Theme.of(tester.element(find.text('Settings'))).brightness,
+        Brightness.dark,
+      );
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(find.text('My bookshelf'), findsOneWidget);
+      expect(find.text('Bookshelf'), findsOneWidget);
+      await tapVisible(tester, find.text('Sign out'));
+      expect(
+        tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+        ThemeMode.dark,
+      );
+      expect(
+        Theme.of(tester.element(find.byType(LoginPage))).brightness,
+        Brightness.dark,
+      );
+      final loginTheme = Theme.of(tester.element(find.byType(TextFormField).first));
+      expect(loginTheme.scaffoldBackgroundColor, const Color(0xFF1B1D21));
+      expect(loginTheme.inputDecorationTheme.fillColor, const Color(0xFF272A30));
+      expect(
+        (loginTheme.inputDecorationTheme.enabledBorder as OutlineInputBorder)
+            .borderSide.color,
+        const Color(0xFF596170),
+      );
+      await tester.enterText(
+        find.byType(TextFormField).first,
+        AuthService.demoEmail,
+      );
+      await tester.enterText(
+        find.byType(TextFormField).last,
+        AuthService.demoPassword,
+      );
+      await tapVisible(tester, find.byType(FilledButton));
+      expect(
+        Theme.of(tester.element(find.byType(MainShell))).brightness,
+        Brightness.dark,
+      );
+    },
+  );
 
   testWidgets('login validates fields and toggles password visibility', (
     tester,
@@ -307,6 +364,8 @@ void main() {
     await tester.enterText(find.byType(TextFormField).first, 'invalid');
     await tapVisible(tester, find.byType(FilledButton));
     expect(find.text('Email chưa hợp lệ'), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField).last, 'secret');
+    await tester.pumpAndSettle();
     await tapVisible(tester, find.byTooltip('Hiện mật khẩu'));
     expect(
       tester.widget<TextField>(find.byType(TextField).last).obscureText,
@@ -429,7 +488,7 @@ void main() {
     },
   );
 
-  testWidgets('reset validates email and clearly reports a simulation', (
+  testWidgets('reset validates email and reports unavailable delivery', (
     tester,
   ) async {
     final auth = AuthService();
@@ -441,7 +500,10 @@ void main() {
     expect(find.text('Vui lòng nhập email'), findsOneWidget);
     await tester.enterText(find.byType(TextFormField), 'reader@example.com');
     await tapVisible(tester, find.byType(FilledButton));
-    expect(find.textContaining('Không có email nào được gửi'), findsOneWidget);
+    expect(
+      find.textContaining('Chưa thể gửi email đặt lại mật khẩu'),
+      findsOneWidget,
+    );
     await tapVisible(tester, find.text('Quay lại đăng nhập'));
     expect(find.byType(LoginPage), findsOneWidget);
   });

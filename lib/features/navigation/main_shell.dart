@@ -1,3 +1,4 @@
+import 'package:open_library_client/core/l10n/app_strings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -7,9 +8,14 @@ import '../auth/auth_service.dart';
 import '../books/book_detail_page.dart';
 import '../books/book_reading_page.dart';
 import '../books/models/book.dart';
+import '../books/services/book_discussion_service.dart';
+import '../books/services/book_ranking_service.dart';
 import '../books/services/offline_book_library.dart';
 import '../books/services/open_library_service.dart';
+import '../books/services/sample_books.dart';
+import '../books/services/backend_book_service.dart';
 import '../bookshelf/bookshelf_page.dart';
+import '../bookshelf/backend_bookshelf_service.dart';
 import '../bookshelf/reading_progress_sheet.dart';
 import '../bookshelf/bookshelf_service.dart';
 import '../bookshelf/models/saved_book.dart';
@@ -30,6 +36,8 @@ class MainShell extends StatefulWidget {
     this.bookshelfService,
     this.bookshelfFactory,
     this.settings,
+    this.discussionService,
+    this.rankingService,
   });
   final AuthService authService;
   final BookshelfService? bookshelfService;
@@ -38,17 +46,32 @@ class MainShell extends StatefulWidget {
   final Future<bool> Function(Book)? onAddToShelf;
   final ValueListenable<List<ReadingBook>>? readingBooks;
   final SettingsService? settings;
+  final BookDiscussionService? discussionService;
+  final BookRankingService? rankingService;
 
   @override
   State<MainShell> createState() => _MainShellState();
 }
 
 class _MainShellState extends State<MainShell> {
-  late final _service = widget.service ?? OpenLibraryService();
+  late final _service =
+      widget.service ??
+      (widget.authService.apiClient == null
+          ? OpenLibraryService()
+          : BackendBookService(widget.authService.apiClient!));
+  late final _catalog = widget.authService.apiClient == null
+      ? null
+      : BackendCatalogService(widget.authService.apiClient!);
+  late final _rankings = widget.rankingService ?? BookRankingService();
   late final _shelf =
       widget.bookshelfService ??
       widget.bookshelfFactory?.call(widget.authService.currentUser!.id) ??
-      BookshelfService(userId: widget.authService.currentUser!.id);
+      (widget.authService.apiClient == null
+          ? BookshelfService(userId: widget.authService.currentUser!.id)
+          : BackendBookshelfService(
+              userId: widget.authService.currentUser!.id,
+              api: widget.authService.apiClient!,
+            ));
   late final _settings =
       widget.settings ??
       SettingsService(userId: widget.authService.currentUser!.id);
@@ -56,6 +79,7 @@ class _MainShellState extends State<MainShell> {
   void initState() {
     super.initState();
     _shelf.loadBooks();
+    _rankings.load();
     if (widget.settings == null) _settings.load();
   }
 
@@ -88,25 +112,32 @@ class _MainShellState extends State<MainShell> {
     if (widget.service == null) _service.dispose();
     if (widget.bookshelfService == null) _shelf.dispose();
     if (widget.settings == null) _settings.dispose();
+    if (widget.rankingService == null) _rankings.dispose();
     super.dispose();
   }
 
-  void _openBook(Book book) => Navigator.of(context).push(
-    MaterialPageRoute<void>(
-      builder: (_) => BookDetailPage(
-        book: book,
-        service: _service,
-        settings: _settings,
-        onAddToShelf: widget.onAddToShelf ?? _shelf.addBook,
-        onStartReading: _markReading,
-        onPageChanged: _saveReadingPage,
+  void _openBook(Book book) {
+    _rankings.recordView(book.id);
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => BookDetailPage(
+          book: book,
+          userId: widget.authService.currentUser?.id,
+          displayName: widget.authService.currentUser?.displayName,
+          discussionService: widget.discussionService,
+          service: _service,
+          settings: _settings,
+          onAddToShelf: widget.onAddToShelf ?? _shelf.addBook,
+          onStartReading: _markReading,
+          onPageChanged: _saveReadingPage,
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   Future<void> _markReading(Book book) async {
     if (_shelf.bookById(book.id) == null) await _shelf.addBook(book);
-    if (_shelf.bookById(book.id)?.status != ReadingStatus.reading) {
+    if (_shelf.bookById(book.id)?.status == ReadingStatus.wantToRead) {
       await _shelf.updateStatus(book.id, ReadingStatus.reading);
     }
   }
@@ -130,9 +161,9 @@ class _MainShellState extends State<MainShell> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'Chưa lưu được sách vào tủ. Bạn vẫn có thể đọc tiếp.',
+              context.tr("Chưa lưu được sách vào tủ. Bạn vẫn có thể đọc tiếp."),
             ),
           ),
         );
@@ -161,6 +192,9 @@ class _MainShellState extends State<MainShell> {
     if (user == null) return const SizedBox.shrink();
     final english = _settings.language == 'en';
     final dark = Theme.of(context).brightness == Brightness.dark;
+    final navigationColor = dark
+        ? const Color(0xFF18263B)
+        : Theme.of(context).colorScheme.surface;
     return Scaffold(
       extendBody: true,
       body: NotificationListener<UserScrollNotification>(
@@ -172,6 +206,8 @@ class _MainShellState extends State<MainShell> {
               index: _tab,
               children: [
                 DiscoverPage(
+                  loadBooks: _catalog?.loadBooks ?? SampleBooks.load,
+                  rankingService: _rankings,
                   displayName: user.displayName,
                   avatarBytes: _settings.avatarBytes,
                   readingBooks: widget.readingBooks ?? _shelf.readingBooks,
@@ -188,7 +224,7 @@ class _MainShellState extends State<MainShell> {
                       isScrollControlled: true,
                       useSafeArea: true,
                       showDragHandle: true,
-                      backgroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
                       builder: (_) =>
                           ReadingProgressSheet(service: _shelf, saved: saved),
                     );
@@ -250,7 +286,7 @@ class _MainShellState extends State<MainShell> {
           minimum: const EdgeInsets.fromLTRB(12, 8, 12, 10),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: navigationColor,
               borderRadius: BorderRadius.circular(26),
               boxShadow: const [
                 BoxShadow(
@@ -264,10 +300,10 @@ class _MainShellState extends State<MainShell> {
               borderRadius: BorderRadius.circular(26),
               child: NavigationBarTheme(
                 data: NavigationBarThemeData(
-                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  backgroundColor: navigationColor,
                   surfaceTintColor: Colors.transparent,
                   indicatorColor: dark
-                      ? const Color(0xFF4B2B35)
+                      ? const Color(0xFF244571)
                       : const Color(0xFFFFEEE9),
                   height: 72,
                   elevation: 0,
@@ -278,7 +314,7 @@ class _MainShellState extends State<MainShell> {
                           ? FontWeight.w700
                           : FontWeight.w500,
                       color: states.contains(WidgetState.selected)
-                          ? AppTheme.accent
+                          ? (dark ? const Color(0xFFFFC45A) : AppTheme.accent)
                           : (dark ? Colors.white70 : const Color(0xFF686B74)),
                     ),
                   ),
@@ -286,7 +322,7 @@ class _MainShellState extends State<MainShell> {
                     (states) => IconThemeData(
                       size: 27,
                       color: states.contains(WidgetState.selected)
-                          ? AppTheme.accent
+                          ? (dark ? const Color(0xFFFFC45A) : AppTheme.accent)
                           : (dark ? Colors.white70 : const Color(0xFF686B74)),
                     ),
                   ),
@@ -298,20 +334,20 @@ class _MainShellState extends State<MainShell> {
                     NavigationDestination(
                       icon: Icon(Icons.home_outlined),
                       selectedIcon: Icon(Icons.home),
-                      label: english ? 'Explore' : 'Khám phá',
+                      label: english ? 'Explore' : context.tr("Khám phá"),
                     ),
                     NavigationDestination(
                       icon: Icon(Icons.search),
-                      label: english ? 'Search' : 'Tìm kiếm',
+                      label: english ? 'Search' : context.tr("Tìm kiếm"),
                     ),
                     NavigationDestination(
                       icon: Icon(Icons.library_books_outlined),
-                      label: english ? 'Bookshelf' : 'Tủ sách',
+                      label: english ? 'Bookshelf' : context.tr("Tủ sách"),
                     ),
                     NavigationDestination(
                       icon: Icon(Icons.person_outline),
                       selectedIcon: Icon(Icons.person),
-                      label: english ? 'Profile' : 'Cá nhân',
+                      label: english ? 'Profile' : context.tr("Cá nhân"),
                     ),
                   ],
                 ),
