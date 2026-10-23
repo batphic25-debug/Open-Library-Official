@@ -1,4 +1,4 @@
-# Bàn giao người 2 — Khám phá và Tìm kiếm
+# Bàn giao Trí Nghĩa — Khám phá và Tìm kiếm
 
 ## Đã hoàn thành
 

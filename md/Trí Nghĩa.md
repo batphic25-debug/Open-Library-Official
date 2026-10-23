@@ -1,4 +1,4 @@
-# Người 2 — Trang Khám phá và Tìm kiếm
+# Trí  — Trang Khám phá và Tìm kiếm
 
 **Dự án:** Open Library Client  
 **Thư mục phụ trách:** `lib/features/discovers/` và `lib/features/search/`

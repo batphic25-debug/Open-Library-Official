@@ -1,4 +1,4 @@
-# Người 5 — Trang Cá nhân, giao diện chung và ghép ứng dụng
+# Quang thành — Trang Cá nhân, giao diện chung và ghép ứng dụng
 
 **Dự án:** Open Library Client  
 **Thư mục phụ trách:** `lib/features/profile/`, `lib/features/navigation/`, `lib/core/` và các file khởi chạy ở gốc dự án.
