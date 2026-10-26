@@ -1,0 +1,17 @@
+workflows:
+  ios-release:
+    name: iOS Release Build
+    max_build_duration: 60
+    environment:
+    # Bạn có thể chọn phiên bản flutter phù hợp với dự án
+      flutter: stable
+      xcode: latest 
+    scripts:
+      - name: Install dependencies
+        script: |
+          flutter packages get
+      - name: Build ipa
+        script: |
+          flutter build ipa --release --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
