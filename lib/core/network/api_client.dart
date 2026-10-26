@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
@@ -45,13 +45,8 @@ class ApiClient {
       _tokenStore = tokenStore ?? const SecureTokenStore(),
       baseUrl = baseUrl ?? defaultBaseUrl;
 
-  static String get defaultBaseUrl {
-    const configured = String.fromEnvironment('API_BASE_URL');
-    if (configured.isNotEmpty) return configured;
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:8000/api/v1';
-    }
-    return 'http://127.0.0.1:8000/api/v1';
+    static String get defaultBaseUrl {
+    return 'https://open-library-client-oe9a.onrender.com/api/v1';
   }
 
   final http.Client _client;
@@ -111,6 +106,7 @@ class ApiClient {
   }) async {
     final uri = Uri.parse('${baseUrl.replaceFirst(RegExp(r'/$'), '')}$path')
         .replace(queryParameters: query);
+    print('===> FLUTTER DANG GOI URL: $uri');
     var response = await _send(method, uri, body, authenticated);
     if (authenticated && response.statusCode == 401 && _refreshToken != null) {
       await _refresh();
