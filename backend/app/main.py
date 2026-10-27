@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
@@ -10,7 +11,6 @@ from .config import Config
 from .db import make_engine, make_session_factory
 from .errors import ApiError, api_error_handler, validation_error_handler
 from .open_library import OpenLibraryClient
-from fastapi.exceptions import RequestValidationError
 
 
 def create_app(config: Config | None = None, engine=None, upstream: OpenLibraryClient | None = None) -> FastAPI:
@@ -30,8 +30,16 @@ def create_app(config: Config | None = None, engine=None, upstream: OpenLibraryC
     app.state.open_library = upstream
     app.add_exception_handler(ApiError, api_error_handler)
     app.add_exception_handler(RequestValidationError, validation_error_handler)
-    if config.cors_origins:
-        app.add_middleware(CORSMiddleware, allow_origins=list(config.cors_origins), allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"], allow_headers=["Authorization", "Content-Type"])
+
+    # Cấu hình CORS: Ưu tiên lấy từ config, nếu không có sẽ cho phép tất cả (*)
+    origins = list(config.cors_origins) if config.cors_origins else ["*"]
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     @app.middleware("http")
     async def request_id(request: Request, call_next):
